@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrainQuiz</title>
+    <style>
+        /* Základní styly pro lepší vzhled */
+        body {
+            font-family: Arial, sans-serif;
+            /* Tmavé/černé pozadí i pro světlý režim */
+            background-color: #121212;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .kviz-kontejner {
+            background-color: #ffffff; /* Bílý kontejner */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* ---------------- STYLY PRO VÍCE OBRÁZKŮ (A, B, C) ---------------- */
+        .obrazky-vice {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .obrazky-vice .obrazek-moznost {
+            text-align: center;
+            max-width: 30%;
+            flex-grow: 1;
+            min-width: 150px;
+        }
+
+        .obrazky-vice img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        /* ---------------- KONEC STYLŮ PRO OBRÁZKY ---------------- */
+
+        /* Původní styl pro JEDEN obrázek */
+        #otazka-obrazek {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ---------------- DARK MODE STYLY ---------------- */
+        body.dark-mode {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .kviz-kontejner {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode .obrazky-vice img {
+            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode h1,
+        body.dark-mode h2 {
+            color: #007bff;
+        }
+
+        body.dark-mode #start-screen h2 {
+            margin-top: 2px; 
+        }
+
+        /* OPRAVA: Styl pro číslo otázky v Dark Mode pro viditelnost */
+        body.dark-mode #pocitadlo-otazek {
+            color: #007bff; /* Světlejší modrá pro lepší kontrast v Dark Mode */
+            margin-bottom: 2px; /* ZAJIŠTĚNÍ MALÉ MEZERY I V DARK MODE */
+        }
+
+        body.dark-mode #otazka-text {
+            color: #c0c0c0;
+        }
+
+        body.dark-mode .moznosti-odpovedi button {
+            background-color: #333333;
+            color: #ffffff;
+        }
+
+        body.dark-mode .moznosti-odpovedi button:hover {
+            background-color: #444444;
+        }
+
+        body.dark-mode input[type="number"] {
+            background-color: #333333;
+            color: #ffffff;
+            border: 1px solid #555;
+        }
+
+        body.dark-mode .moznosti-odpovedi button.spravne {
+            background-color: #558b2f;
+            color: #ffffff;
+        }
+
+        body.dark-mode .moznosti-odpovedi button.spatne {
+            background-color: #b71c1c;
+            color: #ffffff;
+        }
+
+        body.dark-mode #start-tlacitko,
+        body.dark-mode #dalsi-tlacitko {
+             background-color: #0066cc;
+        }
+
+        body.dark-mode #start-tlacitko:hover,
+        body.dark-mode #dalsi-tlacitko:hover {
+            background-color: #007bff;
+        }
+
+        body.dark-mode #dark-mode-prepninac {
+            background-color: #0066cc;
+        }
+
+        body.dark-mode #dark-mode-prepninac:hover {
+            background-color: #007bff;
+        }
+
+        body.dark-mode #vysledek {
+            color: #ffffff;
+        }
+
+        body.dark-mode #restart-tlacitko {
+            background-color: #b71c1c;
+        }
+
+        body.dark-mode #restart-tlacitko:hover {
+            background-color: #8b0000;
+        }
+
+        /* NOVÝ STYL: pro zobrazení zbývajících otázek v Dark Mode */
+        body.dark-mode #zbyle-otazky {
+            color: #81C784; /* Světlejší zelená na tmavém pozadí */
+        }
+
+        /* NOVÝ STYL: Zajištění viditelnosti labelu v Dark Mode */
+        body.dark-mode label[for="pocetOtazek"] {
+            color: #c0c0c0;
+        }
+        /* ---------------- KONEC DARK MODE STYLŮ ---------------- */
+
+        h1 {
+            color: #004d99;
+            text-align: center;
+            /* OPRAVA: Sníženo pro přiblížení počítadla */
+            margin-bottom: 0;
+        }
+
+        /* Styl pro počítadlo otázek (ve světlém režimu) */
+        #pocitadlo-otazek {
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 2px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #004d99; /* Modrá barva */
+        }
+
+        h2 {
+            color: #004d99;
+            text-align: center;
+        }
+
+        #otazka-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #555;
+            min-height: 50px;
+        }
+
+        .moznosti-odpovedi {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .moznosti-odpovedi button {
+            background-color: #e0e0e0;
+            border: none;
+            padding: 15px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s, color 0.3s;
+            font-size: 1em;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .moznosti-odpovedi button:hover {
+            background-color: #d1d1d1;
+        }
+
+        .moznosti-odpovedi button.spravne {
+            background-color: #a8e6cf;
+            color: #1e6e4f;
+            font-weight: bold;
+        }
+
+        .moznosti-odpovedi button.spatne {
+            background-color: #ff9a9a;
+            color: #9b2c2c;
+        }
+
+        /* ---------------- TLAČÍTKA START/DALŠÍ ---------------- */
+        #dalsi-tlacitko, #start-tlacitko {
+             background-color: #004d99;
+             color: white;
+             padding: 10px 20px;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             font-size: 1.1em;
+             width: 100%;
+             transition: background-color 0.3s;
+             margin-top: 10px;
+        }
+
+        #dalsi-tlacitko:hover, #start-tlacitko:hover {
+            background-color: #003366;
+        }
+
+        #dalsi-tlacitko:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* ---------------- TLAČÍTKA RESTART (VYLEPŠENÉ) ---------------- */
+        #restart-tlacitko {
+             background-color: #f44336;
+             color: white;
+             padding: 12px 25px;
+             border: none;
+             border-radius: 8px;
+             cursor: pointer;
+             font-size: 1.1em;
+             width: 100%;
+             transition: background-color 0.3s;
+             margin-top: 25px !important;
+             font-weight: bold;
+             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #restart-tlacitko:hover {
+            background-color: #d32f2f;
+        }
+        /* ---------------- KONEC TLAČÍTKA RESTART ---------------- */
+
+        #vysledek {
+            text-align: center;
+            font-size: 1.5em;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        #dark-mode-prepninac {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: #004d99;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+            z-index: 1000;
+        }
+
+        #dark-mode-prepninac:hover {
+            background-color: #003366;
+        }
+
+        /* ---------------- STYLY PRO START SCREEN (NASTAVENÍ) ---------------- */
+
+        label[for="pocetOtazek"] {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: block;
+            margin: 15px 0 10px 0;
+            color: #28a745;
+        }
+
+        #pocetOtazek {
+            padding: 15px !important;
+            font-size: 2.4em;
+        }
+
+        /* NOVÝ STYL: pro zobrazení zbývajících otázek (ve světlém režimu) */
+        #zbyle-otazky {
+            font-size: 1.1em;
+            color: #4CAF50;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* ---------------- STYLY PRO ÚSPĚŠNOST ---------------- */
+
+        /* 1. Barva úspěšnosti ve SVĚTLÉM REŽIMU */
+        #uspesnost-text {
+            color: #004d99; /* Tmavě modrá */
+        }
+
+        /* 2. Barva úspěšnosti v TMAVÉM REŽIMU (stejná jako Train Quiz) */
+        body.dark-mode #uspesnost-text {
+             color: #007bff; /* Světle modrá Train Quiz v Dark Mode */
+        }
+
+        /* ---------------- KONEC STYLŮ PRO START SCREEN ---------------- */
+
+    </style>
+</head>
+<body>
+
+<button id="dark-mode-prepninac">Režim: Světlý ☀️</button>
+
+<div class="kviz-kontejner">
+    <h1>TrainQuiz</h1>
+    <p id="pocitadlo-otazek"></p>
+
+    <div id="start-screen">
+                <h2>Nastavení kvízu</h2>
+                <p id="zbyle-otazky"></p>
+                <label for="pocetOtazek">Vyberte počet otázek (Max: 191):</label>
+                <input type="number" id="pocetOtazek" min="1" max="191" autofocus>
+
+                        <div id="statistiky-uspesnosti" style="margin-top: 20px;">
+                            </div>
+        <button id="reset-statistiky-tlacitko" style="margin-top: 10px; background-color: #8b0000; color: white; padding: 10px; border: none; border-radius: 5px; width: 100%; cursor: pointer; font-size: 1em;">Resetovat celkové statistiky 🗑️</button>
+                        <button id="start-tlacitko" style="margin-top: 15px;">Spustit kvíz</button>
+            </div>
+
+    <div id="kviz-elementy" style="display:none;">
+
+        <p id="otazka-text"></p>
+
+        <img id="otazka-obrazek" alt="Ilustrační obrázek k otázce">
+
+        <div id="obrazky-vice-kontejner" class="obrazky-vice"></div>
+
+        <div class="moznosti-odpovedi" id="moznosti-kontejner">
+        </div>
+        <button id="dalsi-tlacitko" disabled>Další otázka</button>
+    </div>
+
+    <div id="vysledek" style="display:none;">
+    </div>
+</div>
+
+<script>
+    // ----------------------------------------------------
+    // DARK MODE LOGIKA (ZACHOVÁNO)
+    // ----------------------------------------------------
+    const darkModePrepninac = document.getElementById('dark-mode-prepninac');
+    const body = document.body;
+
+    function setDarkMode(isDark) {
+        if (isDark) {
+            body.classList.add('dark-mode');
+            darkModePrepninac.textContent = 'Režim: Tmavý 🌙';
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            body.classList.remove('dark-mode');
+            darkModePrepninac.textContent = 'Režim: Světlý ☀️';
+            localStorage.setItem('darkMode', 'disabled');
+        }
+    }
+
+    // Inicializace: Zkontroluje uloženou preferenci
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        setDarkMode(true);
+    } else {
+        setDarkMode(false);
+    }
+
+    // Listener pro přepínání
+    darkModePrepninac.addEventListener('click', () => {
+        const isCurrentlyDark = body.classList.contains('dark-mode');
+        setDarkMode(!isCurrentlyDark);
+    });
+    // ----------------------------------------------------
+    // DATABÁZE OTÁZEK (ZKRÁCENO pro přehlednost)
+    // ----------------------------------------------------
+const originalniOtazky = [
+    // 1.
+    {
+        otazka: "1. Vlak zastavil před oddílovým návěstidlem AB s návěstí „Stůj“. V následujícím traťovém oddílu je výhybka odbočující ze širé tratě. Za jakých podmínek a jakým způsobem může vlak pokračovat v jízdě?",
+        moznosti: ["Může pokračovat bez svolení výpravčího jízdou podle rozhledových poměrů k následujícímu oddílovému návěstidlu AB a přes výhybku na širé trati nesmí překročit rychlost 40 km/h", "Protože je oddílové návěstidlo AB opatřeno červenobílým označovacím pásem, nesmí pokračovat v jízdě bez svolení výpravčího přední stanice", "Může pokračovat bez svolení výpravčího jízdou podle rozhledových poměrů k následujícímu oddílovému návěstidlu AB, výhybka na širé trati jeho rychlost neovlivňuje"],
+        spravna: "Protože je oddílové návěstidlo AB opatřeno červenobílým označovacím pásem, nesmí pokračovat v jízdě bez svolení výpravčího přední stanice",
+        obrazek: "obrazky2025/1.jpg"
+    },
+    // 2.
+    {
+        otazka: "2. Strojvedoucímu se nepodařilo provést zkoušku spojení kódovaným hlášením „D“ u rádiovníku snávěstí „Přepněte kanálovou skupinu - 65“. Jaký bude jeho další postup?",
+        moznosti: ["Strojvedoucí jede dále podle rozhledových poměrů a to nejdále do následující stanice", "Strojvedoucí nečiní žádná opatření, závadu po ukončení směny ohlásí standartním způsobem v domovském depu", "Strojvedoucí se pokusí provést zkoušku spojení s další nácestnou stanicí nebo s příslušným dispečerem"],
+        spravna: "Strojvedoucí se pokusí provést zkoušku spojení s další nácestnou stanicí nebo s příslušným dispečerem",
+        obrazek: null
+    },
+    // 3.
+    {
+        otazka: "3. Volací čísla pro adresné zkrácené volby v systému GSM-R strojvedoucí nalezne:",
+        moznosti: ["V SJŘ", "V TTP a provozním řádu pracoviště ČD", "V provozním řádu GSM-R"],
+        spravna: "V provozním řádu GSM-R",
+        obrazek: null
+    },
+    // 4.
+    {
+        otazka: "4. Jaké údaje (FN a FC) nastaví strojvedoucí HV na radiostanici v systému GSM-R při posunu z depa navlak?",
+        moznosti: ["FC 01, FN čísla vlaku na který posunuje", "FC 04, FN čísla vlaku na který posunuje", "FC 01, FN bez čísla vlaku (na první tři pozice zadání čísla vlaku zadá 000)"],
+        spravna: "FC 04, FN čísla vlaku na který posunuje",
+        obrazek: null
+    },
+    // 5.
+    {
+        otazka: "5. Jaký bude postup strojvedoucího, který nezná po ukončení jízdy vlaku další nasazení HV a radiostanicimá zaregistrovanou v systému GSM-R?",
+        moznosti: ["Nastaví po zastavení vlaku v konečné stanici vlaku FC 04 a původní číslo vlaku ponechá", "Nastaví po zastavení vlaku v konečné stanici vlaku FC 05 a původní číslo vlaku ponechá", "Původní číslo vlaku ponechá a FC do obdržení pokynu od výpravčího nezmění"],
+        spravna: "Původní číslo vlaku ponechá a FC do obdržení pokynu od výpravčího nezmění",
+        obrazek: null
+    },
+    // 6.
+    {
+        otazka: "6. Jaké volací číslo použije strojvedoucí pro volání hnacího vozidla Českých drah, a.s. 162 053-3 vsystému GSM-R?",
+        moznosti: ["3 54 162 053 01", "1 54 162 053 01", "2 54 162 053 02"],
+        spravna: "3 54 162 053 01",
+        obrazek: null
+    },
+    // 7.
+    {
+        otazka: "7. Jak zní informace o návěsti dovolující jízdu vlaku telekomunikačním zařízením pro vlak 19524, kterýstojí na třetí koleji ve stanici Eden?",
+        moznosti: ["„Odjezdové návěstidlo S1 ve stanici Eden dovoluje jízdu vlaku 19524“", "„Vlak 19524 ze třetí koleje do Strahova postaveno“", "„Vlak 19524 ve stanici Eden ze třetí koleje do stanice Strahov odjezd“"],
+        spravna: "„Odjezdové návěstidlo S1 ve stanici Eden dovoluje jízdu vlaku 19524“",
+        obrazek: null
+    },
+    // 8.
+    {
+        otazka: "8. Za jízdy vlaku R 663 ze ŽST Nezvěstice dojde k poruše radiostanice a strojvedoucí se nemůže spojit s výpravčím (dispečerem) jiným způsobem. Jak bude strojvedoucí postupovat?",
+        moznosti: ["Nečiní žádná opatření", "Poruchu nahlásí až ve stanici Nepomuk v místě pravidelného zastavení", "Poruchu nahlásí ve stanici Blovice. Vlak ve stanici Blovice za účelem nahlášení poruchy zastaví"],
+        spravna: "Poruchu nahlásí ve stanici Blovice. Vlak ve stanici Blovice za účelem nahlášení poruchy zastaví",
+        obrazek: "obrazky2025/8.jpg"
+    },
+    // 9.
+    {
+        otazka: "9. Jak provede strojvedoucí zkoušku spojení v systému GSM-R?",
+        moznosti: ["Registrací vlaku a zkontrolováním údajů o provedené registraci", "V systému GSM-R se zkouška spojení neprovádí", "Zavoláním výpravčího, který spojení potvrdí"],
+        spravna: "Registrací vlaku a zkontrolováním údajů o provedené registraci",
+        obrazek: null
+    },
+    // 10.
+    {
+        otazka: "10. Vlak zastavil ve stanici Praha Dejvice. V jaký čas může odjet?",
+        moznosti: ["Nejdříve v 8:11", "Ihned po výstupu cestujících", "Nejdříve v 8:08"],
+        spravna: "Nejdříve v 8:08",
+        obrazek: "obrazky2025/10.jpg"
+    },
+    // 11.
+    {
+        otazka: "11. Strojvedoucí zastavil s vlakem bez ETCS u návěsti AB s návěstí „Stůj“ za mlhy. Jiná vozidla vnásledujícím traťovém oddílu nevidí. Jak bude postupovat?",
+        moznosti: ["Od oddílového návěstidla AB jede podle rozhledových poměrů až k následujícímu oddílovému návěstidlu", "Nesmí pokračovat v další jízdě", "Vyžádá si od výpravčího informaci, zda v následujícím prostorovém oddílu nestojí vlak. Pokud ne, jede od oddílového návěstidla AB podle rozhledových poměrů až k následujícímu oddílovému návěstidlu"],
+        spravna: "Od oddílového návěstidla AB jede podle rozhledových poměrů až k následujícímu oddílovému návěstidlu",
+        obrazek: null
+    },
+    // 12.
+    {
+        otazka: "12. Při jízdě přes diagnostiku závad jedoucích vozidel (ASDEK) strojvedoucí musel vzhledem k vzniklésituaci použít průběžnou brzdu. Jak bude následně postupovat při obdržení informace od výpravčíhonapř.: „Vlak číslo, indikována horká obruč stupně K, zastavte ve stanici“?",
+        moznosti: ["Potvrdí výpravčímu nestandartní jízdu přes diagnostiku a v nejbližší stanici z tohoto důvodu nezastaví", "Provozním brzděním zastaví v nejbližší stanici", "Dojede do nejbližší stanice rychlostí 30 km/h"],
+        spravna: "Potvrdí výpravčímu nestandartní jízdu přes diagnostiku a v nejbližší stanici z tohoto důvodu nezastaví",
+        obrazek: null
+    },
+    // 13.
+    {
+        otazka: "13. Ve sloupci 2 TJŘ za názvem stanice Opatov je uvedena značka „3>“. Jakou nejvyšší dovolenourychlostí může strojvedoucí jet v červeně vyznačeném úseku?",
+        moznosti: ["30 km/h", "30 km/h a podle rozhledových poměrů", "40 km/h"],
+        spravna: "40 km/h",
+        obrazek: "obrazky2025/13.jpg"
+    },
+    // 14.
+    {
+        otazka: "Výpravčí doručí na hnací vozidlo písemný rozkaz. Jak bude postupovat strojvedoucí?",
+        moznosti: ["Je povinen si jej přečíst před rozjezdem vlaku a znění rozkazu zopakovat výpravčímu", "Ihned písemný rozkaz podepíše tak, aby nedošlo ke zpoždění vlaku", "Je povinen si jej přečíst před potvrzením jeho převzetí"],
+        spravna: "Je povinen si jej přečíst před potvrzením jeho převzetí",
+        obrazek: null
+    },
+    // 15.
+    {
+        otazka: "15. Při kontrole chodu soupravy za jízdy průvan vynesl písemný rozkaz z okna kabiny a strojvedoucí si nepamatuje obsah písemného rozkazu pro další úsek. Jaký bude jeho další postup?",
+        moznosti: ["Pokračuje do nejbližší stanice obsazené výpravčím podle rozhledových poměrů, při jízdě přes všechny přejezdy jedná, jako kdyby byl zpraven rozkazem Op pokynem 1. V této stanici zastaví a požádá o vydání nových písemných rozkazů", "Pokračuje do nejbližší stanice obsazené výpravčím sníženou rychlostí", "Vlak ihned zastaví, pomocí telek. zařízení se spojí s předním, při nemožnosti spojení se zadním výpravčím a vyžádá si sepsání písemného rozkazu Pv"],
+        spravna: "Pokračuje do nejbližší stanice obsazené výpravčím podle rozhledových poměrů, při jízdě přes všechny přejezdy jedná, jako kdyby byl zpraven rozkazem Op pokynem 1. V této stanici zastaví a požádá o vydání nových písemných rozkazů",
+        obrazek: null
+    },
+    // 16.
+    {
+        otazka: "16. Strojvedoucí má poruchu tabletu a nepamatuje si znění textu SPO pro úsek ve kterém vede vlak.Jaký bude jeho další postup?",
+        moznosti: ["Pokračuje v jízdě podle rozhledových poměrů, dokud nedorazí do stanice, kde znění SPO vyhledá v tištěné podobě", "Zavolá kolegovi, který jel tímto úsekem před ním, a zeptá se ho na znění SPO", "Je nutné kontaktovat dispečerský aparát dopravce, který zajistí doručení SPO strojvedoucímu. Jízda bez platných SPO pro daný den a trať není dovolena."],
+        spravna: "Je nutné kontaktovat dispečerský aparát dopravce, který zajistí doručení SPO strojvedoucímu. Jízda bez platných SPO pro daný den a trať není dovolena.",
+        obrazek: null
+    },
+    // 17.
+    {
+        otazka: "17. Strojvedoucí za jízdy zpozoruje světelný výstražný terč s návěstí „Práce na trati“. Kdy musí dávatnávěst „Pozor“?",
+        moznosti: ["Do úrovně světelného výstražného terče pro opačný směr jízdy nebo do úrovně vjezdového návěstidla nejbližší stanice", "Do doby zpozorovaní zaměstnanců pohybujících se v kolejišti", "Návěst „Pozor“ se dává vždy jen v úseku mezi zpozorováním návěsti „Práce na trati“ a skutečným umístěním návěsti „Práce na trati“"],
+        spravna: "Do úrovně světelného výstražného terče pro opačný směr jízdy nebo do úrovně vjezdového návěstidla nejbližší stanice",
+        obrazek: "obrazky2025/17.jpg"
+    },
+    // 18.
+    {
+        otazka: "18. Jak bude strojvedoucí postupovat při obdržení informace \"Vlak 9308, indikováno horké ložisko stupně STOP, okamžitě zastavte!\":",
+        moznosti: ["Ihned zavede provozní brzdění a zastaví vlak", "Neprodleně zavede rychločinné brzdění", "Dojede do nejbližší stanice sníženou rychlostí, vlak pravidelně projíždějící ve stanici zastaví"],
+        spravna: "Ihned zavede provozní brzdění a zastaví vlak",
+        obrazek: null
+    },
+    // 19.
+    {
+        otazka: "19. Jaký bude postup strojvedoucího po zastavení u oddílového návěstidla AH s návěstí „Stůj“?",
+        moznosti: ["Po 5 minutách se spojí s výpravčím přední stanice za účelem sjednání další jízdy, není-li to možné tak prostřednictvím výpravčího zadní stanice", "Může ihned po zastavení pokračovat v další jízdě podle rozhledových poměrů", "Nečiní žádná opatření. Vždy vyčká na návěst dovolující další jízdu"],
+        spravna: "Po 5 minutách se spojí s výpravčím přední stanice za účelem sjednání další jízdy, není-li to možné tak prostřednictvím výpravčího zadní stanice",
+        obrazek: "obrazky2025/19.jpg"
+    },
+    // 20.
+    {
+        otazka: "20. Jaký bude postup strojvedoucího po zastavení u zhaslého oddílového návěstidla AH?",
+        moznosti: ["Ihned se spojí s výpravčím přední stanice, není-li to možné tak prostřednictvím výpravčího zadní stanice", "Po 5 minutách se spojí s výpravčím přední stanice", "Po 10 minutách pokračuje v další jízdě podle rozhledových poměrů"],
+        spravna: "Ihned se spojí s výpravčím přední stanice, není-li to možné tak prostřednictvím výpravčího zadní stanice",
+        obrazek: "obrazky2025/20.jpg"
+    },
+    // 21.
+    {
+        otazka: "21. V ŽST Mrákoty nelze z důvodu poruchy obsluhovat odjezdové návěstidlo L2. Výpravčí pouze zpraví strojvedoucího telekomunikačním zařízením takto: „Odjezdové návěstidlo L2 stanice Mrákoty se neobsluhuje. Vlak 9998 ve stanici Mrákoty z druhé koleje do stanice Chvojkovice odjezd.“ Uvede strojvedoucí vlak do pohybu?",
+        moznosti: ["Ne, strojvedoucí zůstane s vlakem stát a vyžádá si sepsání písemného rozkazu", "Ano, pokud výpravčí uvede, že je hovor nahráván", "Ano, pokud je strojvedoucí registrován v systému GSM-R"],
+        spravna: "Ne, strojvedoucí zůstane s vlakem stát a vyžádá si sepsání písemného rozkazu",
+        obrazek: "obrazky2025/21.jpg"
+    },
+    // 22.
+    {
+        otazka: "22. Vlak s přepravou cestujících vjíždí do stanice Liptákov na návěst „Výstraha“ vjezdového návěstidla.Na odjezdovém návěstidle platném pro jednu kolej je návěst „Přivolávací návěst“. Jak bude strojvedoucí postupovat?",
+        moznosti: ["Zastaví a vyžádá si výpravu vlaku návěstí „Odjezd“", "Projíždí. Vlak je vypraven návěstí hlavního návěstidla S1", "Projede pouze v případě, že výpravčí dává při vjezdu vlaku návěst „Odjezd“. Není-li tato podmínka splněna, ve stanici zastaví"],
+        spravna: "Projíždí. Vlak je vypraven návěstí hlavního návěstidla S1",
+        obrazek: "obrazky2025/22.jpg"
+    },
+    // 23.
+    {
+        otazka: "23. Vlak s přepravou cestujících stojí ve stanici Nepomuk označené v TJŘ symbolem „výpravky“ v prostoru pro výstup a nástup cestujících. Cestové návěstidlo platné jen pro jednu kolej, na které tento vlak stojí, návěstí „Přivolávací návěst“. Je pro strojvedoucího návěst „Přivolávací návěst“ rozkazem kodjezdu?",
+        moznosti: ["Není pro strojvedoucího rozkazem k odjezdu a vlak musí být vypraven jiným způsobem než návěstí hlavního návěstidla", "Je pro strojvedoucího rozkazem k odjezdu, ale jen tehdy, vidí-li návěst následujícího hlavního návěstidla, nebo byl-li o návěsti tohoto návěstidla zpraven", "Je pro strojvedoucího rozkazem k odjezdu"],
+        spravna: "Není pro strojvedoucího rozkazem k odjezdu a vlak musí být vypraven jiným způsobem než návěstí hlavního návěstidla",
+        obrazek: "obrazky2025/23.jpg"
+    },
+    // 24.
+    {
+        otazka: "24. Vlak s přepravou cestujících stojí ve stanici Světlá nad Sázavou, která nemá ve sloupci 2 TJŘ žádnou značku. Odjezdové návěstidlo platné jen pro kolej, na které tento vlak stojí, návěstí návěst „Přivolávací návěst“. Je tato návěst pro strojvedoucího rozkazem k odjezdu?",
+        moznosti: ["Ano, je pro strojvedoucího rozkazem k odjezdu", "Ne, není rozkazem k odjezdu a vlak musí být vypraven jiným způsobem", "Ano, je pro strojvedoucího rozkazem k odjezdu, ale jen tehdy, vidí- li návěst následujícího hlavního návěstidla, nebo byl-li o návěsti tohoto návěstidla zpraven"],
+        spravna: "Ano, je pro strojvedoucího rozkazem k odjezdu",
+        obrazek: "obrazky2025/24.jpg"
+    },
+    // 25.
+    {
+        otazka: "25. Vlak odjíždí ze stanice kolem cestového návěstidla s návěstí „Přivolávací návěst“. Na následujícím hlavním návěstidle je návěst dovolující jízdu. Pojede strojvedoucí podle rozhledových poměrů?",
+        moznosti: ["Ano, od cestového návěstidla až k následujícímu hlavnímu návěstidlu", "Ne", "Ano, v obvodu výhybek přilehlých k cestovému návěstidlu"],
+        spravna: "Ano, od cestového návěstidla až k následujícímu hlavnímu návěstidlu",
+        obrazek: "obrazky2025/25.jpg"
+    },
+    // 26.
+    {
+        otazka: "26. Vlak vjíždí do stanice kolem vjezdového návěstidla s návěstí „Přivolávací návěst“. Na následujícím hlavním návěstidle je návěst dovolující jízdu. Jakou nejvyšší dovolenou rychlostí může jet strojvedoucí v úseku od námezníku k následujícímu hlavnímu návěstidlu (červeně označeno)?",
+        moznosti: ["80 km/h", "40 km/h", "30 km/h"],
+        spravna: "40 km/h",
+        obrazek: "obrazky2025/26.jpg"
+    },
+    // 27.
+    {
+        otazka: "27. Jaký pokyn dává návěst přejezdníku?",
+        moznosti: ["„Uzavřený přejezd“, informuje o správné činnosti PZZ a přikazuje strojvedoucímu oznámit výpravčímu, že na přejezdníku svítí přerušované bílé světlo", "Jedná se o pochybnou návěst", "„Otevřený přejezd“ a přikazuje jízdu přes přejezd se zvýšenou opatrností"],
+        spravna: "„Uzavřený přejezd“, informuje o správné činnosti PZZ a přikazuje strojvedoucímu oznámit výpravčímu, že na přejezdníku svítí přerušované bílé světlo",
+        obrazek: "obrazky2025/27.jpg"
+    },
+    // 28.
+    {
+        otazka: "28. V modrém úseku mezi přejezdníkem a přejezdem vlak mimořádně zastaví. Jak pojede strojvedoucí k přejezdu?",
+        moznosti: ["Se zvýšenou opatrností", "Se zvýšenou opatrností pouze v případě, že prodlouží jízdní dobu o více jak 4 min", "Jedná podle předchozí návěsti přejezdníku"],
+        spravna: "Se zvýšenou opatrností",
+        obrazek: "obrazky2025/28.jpg"
+    },
+    // 29.
+    {
+        otazka: "29. Jakou značkou se vyznačují pravidelné vjezdy na obsazenou kolej v tabelárním jízdním řádu příslušného vlaku?",
+        moznosti: ["a)", "b)", "c)"],
+        spravna: "a)",
+        obrazek: "obrazky2025/29.jpg"
+    },
+    // 30.
+    {
+        otazka: "30. Jakým způsobem musí být strojvedoucí zpraven o mimořádném vjezdu na obsazenou kolej?",
+        moznosti: ["značkou v TJŘ „o“ nebo písemným rozkazen", "Zpravení písemným rozkazem není potřeba, výpravčí pouze informuje strojvedoucího pomocí telekomunikačního zařízení", "Návěstí „Výstraha“, která vždy nahrazuje zpravení vlaku o mimořádném vjezdu na obsazenou kolej"],
+        spravna: "značkou v TJŘ „o“ nebo písemným rozkazen",
+        obrazek: "obrazky2025/30.jpg"
+    },
+    // 31.
+    {
+        otazka: "31. Strojvedoucí u výchozího vlaku nevidí návěst nejbližšího hlavního návěstidla. V TJŘ ve sloupci 2 není uvedena žádná značka. Jaký bude další postup strojvedoucího v čase odjezdu?",
+        moznosti: ["Zavolá výpravčímu a vyžádá si výpravu vlaku jiným způsoben než návěstí hlavního návěstidla", "Zavolá výpravčímu a vyžádá si svolení k další jízdě volnou formou", "Uvede vlak do pohybu maximální rychlostí 40 km/h podle rozhledových poměrů a s pohotovostí zastavit u nejbližšího hlavního návěstidla"],
+        spravna: "Zavolá výpravčímu a vyžádá si výpravu vlaku jiným způsoben než návěstí hlavního návěstidla",
+        obrazek: "obrazky2025/31.jpg"
+    },
+    // 32.
+    {
+        otazka: "32. Strojvedoucí vjel do stanice kolem vjezdového návěstidla s návěstí „Volno“ a zastavil s vlakem ve stanici tak, že nevidí návěst nejbližšího hlavního návěstidla. V TJŘ ve sloupci 2 není uvedena žádná značka. Jaký bude další postup strojvedoucího v čase odjezdu?",
+        moznosti: ["Uvede vlak do pohybu", "Zavolá výpravčímu a vyžádá si výpravu vlaku jiným způsobem než návěstí hlavního návěstidla", "Uvede vlak do pohybu maximální rychlostí 40 km/h podle rozhledových poměrů a s pohotovostí zastavit u nejbližšího hlavního návěstidla"],
+        spravna: "Uvede vlak do pohybu",
+        obrazek: "obrazky2025/32.jpg"
+    },
+    // 33.
+    {
+        otazka: "33. Vlak Os 5555 stojí mimo prostor pro výstup a nástup cestujících a je připraven k odjezdu ze stanice Pavlíkov. Může strojvedoucí po změně návěstního znaku odjezdového návěstidla s vlakem ze stanice odjet?",
+        moznosti: ["Ano, vlak je vypraven návěstí hlavního návěstidla", "Ne, musí vždy vyčkat na návěst „Odjezd“ danou výpravčím", "Ne, vlak s přepravou cestujících musí vždy ve stanici obdržet od vlakové čety návěst „Souhlas k odjezdu“"],
+        spravna: "Ano, vlak je vypraven návěstí hlavního návěstidla",
+        obrazek: "obrazky2025/33.jpg"
+    },
+    // 34.
+    {
+        otazka: "34. Vlak Sp 1998 je po mimořádném zastavení připraven k odjezdu ze stanice Brno Slatina. Strojvedoucí neodjistil centrálně ovládané dveře. Může strojvedoucí ze stanice odjet, pokud odjezdové návěstidlo je v poloze dovolující jízdu?",
+        moznosti: ["Ne, musí vyčkat na návěst „Odjezd“ danou výpravčím", "Ano, odjíždí ihned", "Ne, musí vždy odjistit dveře, aby obdržel od vlakové čety návěst „Souhlas k odjezdu“"],
+        spravna: "Ne, musí vyčkat na návěst „Odjezd“ danou výpravčím",
+        obrazek: "obrazky2025/34.jpg"
+    },
+    // 35.
+    {
+        otazka: "35. Vlak Sp 1998 je po mimořádném zastavení připraven k odjezdu ze stanice Brno Slatina. Jedná se o vlak bez centrálního ovládaní dveří strojvedoucím. Vlak musí být ze stanice vypraven:",
+        moznosti: ["Návěstí „Odjezd“ danou výpravčím", "Návěstí hlavního návěstidla", "Návěstí „Souhlas k odjezdu“ danou vlakovou četou"],
+        spravna: "Návěstí „Odjezd“ danou výpravčím",
+        obrazek: "obrazky2025/35.jpg"
+    },
+    // 36.
+    {
+        otazka: "36. Vlak Sv 9999 je připraven k odjezdu ze stanice Pavlíkov. Vlak musí být ze stanice vypraven:",
+        moznosti: ["Návěstí hlavního návěstidla", "Návěstí „Odjezd“ danou výpravčím", "Návěstí „Souhlas k odjezdu“ danou vlakovou četou"],
+        spravna: "Návěstí hlavního návěstidla",
+        obrazek: "obrazky2025/36.jpg"
+    },
+    // 37.
+    {
+        otazka: "37. Je-li strojvedoucímu přidělen pilot, musí být i on zpraven o obsahu písemného rozkazu?",
+        moznosti: ["Musí být zpraven", "Nemusí, stačí ústní předání informace", "Nemusí být zpraven žádným způsobem"],
+        spravna: "Musí být zpraven",
+        obrazek: "obrazky2025/37.jpg"
+    },
+    // 38.
+    {
+        otazka: "38. Jakou návěst na odjezdovém návěstidle musí očekávat strojvedoucí projíždějícího vlaku ve stanici Lhota. Odjezdové návěstidlo S1 není předvěstí dalšího hlavního návěstidla:",
+        moznosti: ["„Volno“", "„Stůj“", "„Výstraha“"],
+        spravna: "„Volno“",
+        obrazek: "obrazky2025/38.jpg"
+    },
+    // 39.
+    {
+        otazka: "39. Jakou návěst na odjezdovém návěstidle musí očekávat strojvedoucí projíždějícího vlaku ve stanici Lhota. Odjezdové návěstidlo S3 není předvěstí dalšího hlavního návěstidla:",
+        moznosti: ["„Volno“", "„Stůj“", "„Výstraha“"],
+        spravna: "„Stůj“",
+        obrazek: "obrazky2025/39.jpg"
+    },
+    // 40.
+    {
+        otazka: "40. Jakou návěst na odjezdovém návěstidle musí očekávat strojvedoucí zastavujícího vlaku ve stanici Lhota?",
+        moznosti: ["„Stůj“", "„Výstraha“", "„Volno“"],
+        spravna: "„Stůj“",
+        obrazek: "obrazky2025/40.jpg"
+    },
+    // 41.
+    {
+        otazka: "41. Jakou rychlostí může jet strojvedoucí v obvodu stanice s výlukou dopravní služby výpravčího, svítí-li na hlavních návěstidlech tato návěst?",
+        moznosti: ["Nejvyšší dovolenou rychlostí", "40 km/h", "Rychlostí jízdy podle rozhledových poměrů"],
+        spravna: "Nejvyšší dovolenou rychlostí",
+        obrazek: "obrazky2025/41.jpg"
+    },
+    // 42.
+    {
+        otazka: "42. Vlak Os 9898 stojí v ŽST Pavlíkov. Za jakých podmínek uvede strojvedoucí vlak do pohybu nastal-li již čas odjezdu vlaku dle TJŘ:",
+        moznosti: ["Po výpravě vlaku jiným způsobem než návěstí hlavního návěstidla, dání návěsti „Výzva k pohotovosti“ („Výzva strojvedoucího“) a obdržení návěsti „Souhlas k odjezdu“ od člena obsluhy vlaku", "Po výpravě vlaku návěstí hlavního návěstidla, dání návěsti „Výzva k pohotovosti“ („Výzva strojvedoucího“) a obdržení návěsti „Souhlas k odjezdu“ od člena obsluhy vlaku", "Po výpravě vlaku od člena obsluhy vlaku návěstí „Souhlas k odjezdu“"],
+        spravna: "Po výpravě vlaku jiným způsobem než návěstí hlavního návěstidla, dání návěsti „Výzva k pohotovosti“ („Výzva strojvedoucího“) a obdržení návěsti „Souhlas k odjezdu“ od člena obsluhy vlaku",
+        obrazek: "obrazky2025/42.jpg"
+    },
+    // 43.
+    {
+        otazka: "43. Vlak Os 8898 stojí v ŽST Krašov. Za jakých podmínek a jakou maximální rychlostí uvede strojvedoucí vlak do pohybu, nastal-li již čas odjezdu vlaku dle TJŘ? Vlak odjíždí na trať nevybavenou oddílovými návěstidly AB.",
+        moznosti: ["Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťovou rychlostí, navíc „B“ až „C“ = jízda podle rozhledových poměrů", "Po výpravě vlaku jiným způsobem než návěstí hl. návěstidla, „A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťovou rychlostí, dále „B“ až „C“ = jízda podle rozhledových poměrů", "Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťovou rychlostí, dále „B“ až „C“ = jízda podle rozhledových poměrů"],
+        spravna: "Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťovou rychlostí, navíc „B“ až „C“ = jízda podle rozhledových poměrů",
+        obrazek: "obrazky2025/43.jpg"
+    },
+    // 44.
+    {
+        otazka: "44. Vlak Os 9999 stojí v ŽST Pavlíkov. Za jakých podmínek a jakou maximální rychlostí uvede strojvedoucívlak do pohybu, nastal-li již čas odjezdu vlaku dle TJŘ. Vlak odjíždí na trať nevybavenou oddílovými návěstidly AB.",
+        moznosti: ["Po výpravě vlaku jiným způsobem než návěstí hl. návěstidla, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťovou rychlostí, navíc „B“ až „C“ = jízda podle rozhledových poměrů", "Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťovou rychlostí, dále „B“ až „C“ = jízda podle rozhledových poměrů", "Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťovou rychlostí, dále „A“ až „C“ = jízda podle rozhledových poměrů"],
+        spravna: "Po výpravě vlaku jiným způsobem než návěstí hl. návěstidla, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťovou rychlostí, navíc „B“ až „C“ = jízda podle rozhledových poměrů",
+        obrazek: "obrazky2025/44.jpg"
+    },
+    // 45.
+    {
+        otazka: "45. Vlak Ex 99 stojí v ŽST Božkov. Za jakých podmínek a jakou maximální rychlostí uvede strojvedoucí vlak do pohybu, nastal-li již čas odjezdu vlaku dle TJŘ. Vlak odjíždí na trať vybavenou oddílovými návěstidly AB:",
+        moznosti: ["Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=40 km/h, dále „B“ až „D“ = jízda podle rozhledových poměrů", "Po výpravě vlaku jiným způsobem než návěstí hl. návěstidla, „A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťová rychlost, dále „A“ až „C“ = jízda podle rozhledových poměrů", "Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťová rychlost, dále „B“ až „D“ = jízda podle rozhledových poměrů"],
+        spravna: "Po výpravě vlaku návěstí hl. návěstidla S1, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=40 km/h, dále „B“ až „D“ = jízda podle rozhledových poměrů",
+        obrazek: "obrazky2025/45.jpg"
+    },
+    // 46.
+    {
+        otazka: "46. Jakou maximální rychlostí a jakým způsobem pojede strojvedoucí v situaci dle obrázku:",
+        moznosti: ["„A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „A“ až „C“ = jízda podle rozhledových poměrů", "„A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „A“ až „C“ = jízda podle rozhledových poměrů", "„A“=40 km/h, „B“=40 km/h, „C“=traťová rychlost, „A“ až „C“ = jízda podle rozhledových poměrů"],
+        spravna: "„A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „A“ až „C“ = jízda podle rozhledových poměrů",
+        obrazek: "obrazky2025/46.jpg"
+    },
+    // 47.
+    {
+        otazka: "47. Jakou maximální rychlostí a jakým způsobem pojede strojvedoucí v situaci dle obrázku:",
+        moznosti: ["„A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťová rychlost, „A“ až „C“ = jízda podle rozhledových poměrů", "„A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťová rychlost, „A“ až „C“ = jízda podle rozhledových poměrů", "„A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťová rychlost, „A“ až „B“ = jízda podle rozhledových poměrů"],
+        spravna: "„A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťová rychlost, „A“ až „C“ = jízda podle rozhledových poměrů",
+        obrazek: "obrazky2025/47.jpg"
+    },
+    // 48.
+    {
+        otazka: "48. Vlak Os 8898 stojí v ŽST Krašov. Strojvedoucí obdržel písemný rozkaz PsD1, rozkaz 1, Povolení projet EOA (Konec oprávnění k jízdě) u návěstidla S1: Za jakých podmínek a jakou maximální rychlostí uvede strojvedoucí vlak do pohybu, nastal-li již čas odjezdu vlaku dle TJŘ. Vlak odjíždí na trať nevybavenou oddílovými návěstidly AB:",
+        moznosti: ["Po výpravě vlaku obdrženým písemným rozkazem PsD1 rozkazem 1, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťovou rychlostí, dále „B“ až „C“ = jízda podle rozhledových poměrů", "Po výpravě vlaku návěstí „Odjezd“, ústně nebo telekomunikačním zařízením, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťovou rychlostí, dále „B“ až „C“ = jízda podle rozhledových poměrů", "Po výpravě vlaku návěstí „Odjezd“, ústně nebo telekomunikačním zařízením, „A“=40 km/h, „B“=40 km/h, „C“=100 km/h, „D“=traťovou rychlostí, dále „B“ až „C“ = jízda podle rozhledových poměrů"],
+        spravna: "Po výpravě vlaku obdrženým písemným rozkazem PsD1 rozkazem 1, „A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=traťovou rychlostí, dále „B“ až „C“ = jízda podle rozhledových poměrů",
+        obrazek: "obrazky2025/48.jpg"
+    },
+    // 49.
+    {
+        otazka: "49. Vlak s přepravou cestujících mimořádně zastaví ve stanici. Po zastavení vyrozumí výpravčí strojvedoucího o příčině zastavení. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Strojvedoucí vyrozumí členy obsluhy vlaku o příčině zastavení", "Strojvedoucí nevykonává žádné další úkony", "Strojvedoucí vyrozumí strojmistra"],
+        spravna: "Strojvedoucí vyrozumí členy obsluhy vlaku o příčině zastavení",
+        obrazek: null
+    },
+    // 50.
+    {
+        otazka: "50. Jak dá strojvedoucí pomocí radiostanice pokyn jinému vlaku k najetí na vozidlo?",
+        moznosti: ["„Vlak 1234 ve stanici Akátov na 6. koleji stlač“", "„Vlak 1234 na vlak 4321 můžeš na mě najet“", "„Na 6. koleji se můžeme spojit“"],
+        spravna: "„Vlak 1234 ve stanici Akátov na 6. koleji stlač“",
+        obrazek: null
+    },
+    // 51.
+    {
+        otazka: "51. Po nástupu na HV se strojvedoucímu nepodařilo provést zaregistrování čísla vlaku s funkčním kódem a systém GSM-R není v poruše. Jaký bude jeho další postup?",
+        moznosti: ["Oznámí tuto skutečnost výpravčímu a dohodne s výpravčím další postup", "Provede ihned nucenou odregistraci", "Automaticky přepne na Simplex"],
+        spravna: "Oznámí tuto skutečnost výpravčímu a dohodne s výpravčím další postup",
+        obrazek: null
+    },
+    // 52.
+    {
+        otazka: "52. Samostatný mot. vůz přijel jako vlak Os 5309 do obratové ŽST v systému GSM-R a dále se bez provedení posunu vrací zpět pod číslem vlaku Os 5308. Od koho obdrží strojvedoucí pokyn ke změně čísla vlaku a funkčního kódu?",
+        moznosti: ["Pro tuto změnu není nutno obdržet žádný pokyn", "Od výpravčího", "Od obsluhy vlaku"],
+        spravna: "Pro tuto změnu není nutno obdržet žádný pokyn",
+        obrazek: null
+    },
+    // 53.
+    {
+        otazka: "53. Jaké volací číslo zadá strojvedoucí při volání v systému GSM-R pokud volá vedoucí vozidlo vlaku 1900?",
+        moznosti: ["2 01900 01", "1900“", "1900 01"],
+        spravna: "2 01900 01",
+        obrazek: null
+    },
+    // 54.
+    {
+        otazka: "54. Jakými čísly vlaku a funkčními kódy se strojvedoucí soupravy vlaku dle obrázku zaregistrují v systému GSM-R pro vlak 1900?",
+        moznosti: ["HV 362: 1900 01, HV 810: 1900 05", "HV 362: 1900 01, HV 810: 1900 01", "HV 362: 1900 01, HV 810: 1900 00"],
+        spravna: "HV 362: 1900 01, HV 810: 1900 05",
+        obrazek: "obrazky2025/54.jpg"
+    },
+    // 55.
+    {
+        otazka: "55. Strojvedoucí vlaku je zpraven tímto textem SPO. Jakou návěst vztahující se k této pomalé jízdě strojvedoucí očekává?",
+        moznosti: ["„Nepředvěstěná pomalá jízda“ nebo „Pomalá jízda“, nepřekročte rychlost 30 km/h", "Jízda pouze se třemi vagóny", "„Nepřekročte rychlost 80 km/h“"],
+        spravna: "„Nepředvěstěná pomalá jízda“ nebo „Pomalá jízda“, nepřekročte rychlost 30 km/h",
+        obrazek: "obrazky2025/55.jpg"
+    },
+    // 56.
+    {
+        otazka: "56. Vlak projíždí stanicí Chválkov. Tato stanice má ve sloupci 2 TJŘ symbol „N“. Jakou nejvyšší dovolenou rychlostí může strojvedoucí jet?",
+        moznosti: ["„A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=40 km/h, „E“=traťová", "„A“=40 km/h, „B“=40 km/h, „C“=traťová, „D“=40 km/h, „E“=traťová", "„A“=40 km/h, „B“=40 km/h, „C“=traťová, „D“=traťová, „E“=traťová"],
+        spravna: "„A“=40 km/h, „B“=40 km/h, „C“=40 km/h, „D“=40 km/h, „E“=traťová",
+        obrazek: "obrazky2025/56.jpg"
+
+    },
+    // 57.
+    {
+        otazka: "57. Jak pojede strojvedoucí k přejezdu, když je mu nařízena jízda se zvýšenou opatrností?",
+        moznosti: ["250 m před přejezdem dává návěst „Pozor“, 60 m před přejezdem nepřekročí rychlost 10 km/h", "300 m před přejezdem dává návěst „Pozor“, 100 m před přejezdem nepřekročí rychlost 15 km/h", "60 m před přejezdem dává návěst „Pozor“, 10 m před přejezdem nepřekročí rychlost 5 km/h"],
+        spravna: "250 m před přejezdem dává návěst „Pozor“, 60 m před přejezdem nepřekročí rychlost 10 km/h",
+        obrazek: null
+    },
+    // 58.
+    {
+        otazka: "58. Strojvedoucí stojí s vlakem R 1292 na staniční koleji č. 1 připravený k odjezdu. V čase pravidelného odjezdu vidí na opakovací samostatné předvěsti OpřS1 návěst „Opakování návěsti Výstraha“. Může strojvedoucí uvést vlak do pohybu?",
+        moznosti: [
+        "Ne, strojvedoucí nesmí uvést vlak do pohybu a ohlásí nastalou situaci výpravčímu",
+        "Ano, samostatná opakovací předvěst dovoluje jízdu, strojvedoucí pojede dle rozhledových poměrů a zastaví až u odjezdového návěstidla S1",
+        "Ano, samostatná opakovací předvěst dovoluje jízdu, strojvedoucí nepřekročí rychlost 40 km/h a zastaví až u odjezdového návěstidla S1"
+        ],
+        spravna: "Ne, strojvedoucí nesmí uvést vlak do pohybu a ohlásí nastalou situaci výpravčímu",
+        obrazek: "obrazky2025/58.jpg"
+    },
+    // 59.
+    {
+        otazka: "59. Strojvedoucí stojí s vlakem R 1294 na staniční koleji č. 1 připravený k odjezdu. V čase pravidelného odjezdu vidí na opakovací samostatné předvěsti OpřS1 návěst „Opakování návěsti Volno“. Může strojvedoucí uvést vlak do pohybu?",
+        moznosti: ["Ano, odjezdové návěstidlo S1 je v poloze dovolující jízdu", "Ano, samostatná opakovací předvěst dovoluje jízdu, strojvedoucí uvede vlak do pohybu a nepřekročí rychlost 40 km/h dokud neuvidí návěstní znak odjezdového návěstidla S1", "Ne, strojvedoucí nesmí uvést vlak do pohybu a ohlásí nastalou situaci výpravčímu"],
+        spravna: "Ano, odjezdové návěstidlo S1 je v poloze dovolující jízdu",
+        obrazek: "obrazky2025/59.jpg"
+    },
+    // 60.
+    {
+        otazka: "60. Strojvedoucí pravidelně projíždějícího vlaku s přepravou cestujících vjíždí do stanice Kaprun. U staniční koleje je umístěno nepřenosné návěstidlo s návěstí „Místo zastavení“. Kde musí strojvedoucí zastavit?",
+        moznosti: ["Čelem vlaku před návěstí „Místo zastavení“", "Prvním vozem určeným pro přepravu cestujících před návěstí „Místo zastavení“", "Čelem vlaku cca 10 metrů před odjezdovým návěstidlem s návěstí „Stůj“"],
+        spravna: "Čelem vlaku před návěstí „Místo zastavení“",
+        obrazek: "obrazky2025/60.jpg"
+    },
+    // 61.
+    {
+        otazka: "61. Strojvedoucí Lv vlaku vjíždí do stanice Kaprun na návěst „Výstraha“. U staniční koleje je umístěno nepřenosné návěstidlo s návěstí „Místo zastavení“. Kde musí strojvedoucí zastavit?",
+        moznosti: ["Čelem vlaku před návěstí „Místo zastavení“", "Čelem vlaku cca 10 metrů před návěstí „Místo zastavení“", "Čelem vlaku cca 10 metrů před odjezdovým návěstidlem s návěstí „Stůj“"],
+        spravna: "Čelem vlaku před návěstí „Místo zastavení“",
+        obrazek: "obrazky2025/61.jpg"
+    },
+    // 62.
+    {
+        otazka: "62. Vlak projíždí stanicí Děvín. Tato stanice má ve sloupci 2 TJŘ symbol „P“. Jakou nejvyšší dovolenou rychlostí může strojvedoucí jet?",
+        moznosti: ["„A“=60 km/h, „B“=60 km/h, „C“=60 km/h, „D“=40 km/h, „E“=traťová", "„A“=60 km/h, „B“=60 km/h, „C“=traťová, „D“=traťová, „E“=traťová", "„A“=60 km/h, „B“=60 km/h, „C“=60 km/h, „D“=60 km/h, „E“=traťová"],
+        spravna: "„A“=60 km/h, „B“=60 km/h, „C“=60 km/h, „D“=40 km/h, „E“=traťová",
+        obrazek: "obrazky2025/62.jpg"
+    },
+    // 63.
+    {
+        otazka: "63. Jak bude postupovat strojvedoucí v červeně označeném úseku?",
+        moznosti: ["Pojede traťovou rychlostí", "Pojede jízdou podle rozhledových poměrů", "Pojede jízdou se zvýšenou opatrností"],
+        spravna: "Pojede traťovou rychlostí",
+        obrazek: "obrazky2025/63.jpg"
+    },
+    // 64.
+    {
+        otazka: "64. Na trati je umístěna návěst „Začátek dočasné pomalé jízdy“. Za jaké podmínky se jí strojvedoucí řídí?",
+        moznosti: ["Dočasná pomalá jízda platí pouze v případě, že je uvedena v písemném rozkaze s odpovídající časovou platností", "Dočasná pomalá jízda platí vždy a to i když není strojvedoucí o jejím umístění zpraven", "Osazení dočasné pomalé jízdy nemusí být uvedeno v písemném rozkaze, při jejím umístění platí vždy v denní době tj. od 6:00 do 20:00"],
+        spravna: "Dočasná pomalá jízda platí pouze v případě, že je uvedena v písemném rozkaze s odpovídající časovou platností",
+        obrazek: "obrazky2025/64.jpg"
+    },
+    // 65.
+    {
+        otazka: "65. Jaká je nejvyšší dovolená rychlost vlaku jedoucím v režimu nouzového spojení pomocí mobilního telefonu?",
+        moznosti: ["120 km/h", "Stanovená rychlost snížená o 20 km/h", "100 km/h"],
+        spravna: "100 km/h",
+        obrazek: null
+    },
+    // 66.
+    {
+        otazka: "66. Může být vystaveno na pravidelný výkon na trati vybavené signálem GSM-R vlakové HV pouze s nouzovým spojením pomocí mobilního telefonu?",
+        moznosti: ["Ne", "Ano", "Po dohodě s výpravčím"],
+        spravna: "Ne",
+        obrazek: null
+    },
+    // 67.
+    {
+        otazka: "67. Jaký je název této návěsti?",
+        moznosti: ["„Rychlost 40 km/h a opakování návěsti výstraha“", "„Rychlost 40 km/h a výstraha na nedostatečnou zábrzdnou vzdálenost“", "„Rychlost 40 km/h a jízda podle rozhledových poměrů“"],
+        spravna: "„Rychlost 40 km/h a jízda podle rozhledových poměrů“",
+        obrazek: "obrazky2025/67.jpg"
+    },
+    // 68.
+    {
+        otazka: "68. Uskutečňuje se tímto návěstidlem výprava vlaku?",
+        moznosti: ["Ne, jen informuje o návěsti na následujícím hlavním návěstidle", "Ano, tato návěst vypravuje vlak", "Ne, pokud strojvedoucí nevidí na následující hlavní návěstidlo"],
+        spravna: "Ne, jen informuje o návěsti na následujícím hlavním návěstidle",
+        obrazek: "obrazky2025/68.jpg"
+    },
+    // 69.
+    {
+        otazka: "69. Jakou informaci zaměstnanci dává tato návěst?",
+        moznosti: ["Určuje místo zastavení pro posunový díl na koleji určenou vodorovnou odvěsnou opisovaného trojúhelníku a dává jí výpravčí", "Požadavek na zabrzdění při ověření funkce brzdy posunového dílu a dává jí odborně způsobilá osoba na konci soupravy", "Informuje výpravčího o skutečnosti, že stanovený vlak vjel celý"],
+        spravna: "Informuje výpravčího o skutečnosti, že stanovený vlak vjel celý",
+        obrazek: "obrazky2025/69.jpg"
+    },
+    // 70.
+    {
+        otazka: "70. Jakou rychlostí bude vjíždět strojvedoucí do žst. Brno-Horní Heršpice, pokud bude na vjezdovém návěstidle tato návěst?",
+        moznosti: ["50 km/h", "40 km/h", "30 km/h"],
+        spravna: "30 km/h",
+        obrazek: "obrazky2025/70.jpg"
+    },
+    // 71.
+    {
+        otazka: "71. Jakou maximální rychlostí může vjíždět strojvedoucí do stanice?",
+        moznosti: ["„A“=40 km/h, „B“=40 km/h, „C“=40 km/h", "„A“=100 km/h, „B“=40 km/h, „C“=40 km/h", "„A“=100 km/h, „B“=100 km/h, „C“=40 km/h"],
+        spravna: "„A“=40 km/h, „B“=40 km/h, „C“=40 km/h",
+        obrazek: "obrazky2025/71.jpg"
+    },
+    // 72.
+    {
+        otazka: "72. Soupravový vlak zastavil na širé trati. Jak bude strojvedoucí postupovat v další jízdě v případě, že zjistil poruchu VZ?",
+        moznosti: ["„A“=40 km/h, „B“=40 km/h, „C“=40 km/h", "„A“=50 km/h, „B“=40 km/h, „C“=40 km/h", "„A“=50 km/h, „B“=50 km/h, „C“=40 km/h"],
+        spravna: "„A“=40 km/h, „B“=40 km/h, „C“=40 km/h",
+        obrazek: "obrazky2025/72.jpg"
+    },
+    // 73.
+    {
+        otazka: "73. Na jakou maximální rychlost smí strojvedoucí rozjet vlak, pokud se jedná o vlak výchozí?",
+        moznosti: ["40 km/h", "50 km/h", "Traťová rychlost"],
+        spravna: "40 km/h",
+        obrazek: "obrazky2025/73.jpg"
+    },
+    // 74.
+    {
+        otazka: "74. Jakou maximální rychlostí smí strojvedoucí jet v červeně vyznačené části vlakové cesty?",
+        moznosti: ["80 km/h", "50 km/h", "40 km/h"],
+        spravna: "80 km/h",
+        obrazek: "obrazky2025/74.jpg"
+    },
+    // 75.
+    {
+        otazka: "75. Jakou maximální rychlostí smí strojvedoucí jet v červeně vyznačené části vlakové cesty?",
+        moznosti: ["80 km/h", "60 km/h", "100 km/h"],
+        spravna: "100 km/h",
+        obrazek: "obrazky2025/75.jpg"
+    },
+    // 76.
+    {
+        otazka: "76. Jakou maximální rychlostí smí strojvedoucí jet v červeně vyznačené části vlakové cesty?",
+        moznosti: ["40 km/h", "60 km/h", "80 km/h"],
+        spravna: "80 km/h",
+        obrazek: "obrazky2025/76.jpg"
+    },
+    // 77.
+    {
+        otazka: "77. Jakou rychlost předvěstí tato návěst?",
+        moznosti: ["40 km/h", "50 km/h", "60 km/h"],
+        spravna: "60 km/h",
+        obrazek: "obrazky2025/77.jpg"
+    },
+    // 78.
+    {
+        otazka: "78. Po vjetí vlaku do traťového oddílu automatického bloku na návěst dovolující jízdu se na návěstním opakovači nerozsvítí žádné světlo (případně svítí jen modré světlo). Jaký bude další postup strojvedoucího?",
+        moznosti: ["Strojvedoucí musí jet podle rozhledových poměrů", "Strojvedoucí musí okamžitě zastavit, poruchu ohlásit výpravčímu a vyžádat si další pokyny", "Strojvedoucí pokračuje v jízdě bez omezení dle předchozího návěstního znaku"],
+        spravna: "Strojvedoucí musí jet podle rozhledových poměrů",
+        obrazek: null
+    },
+    // 79.
+    {
+        otazka: "79. Jak zní závazné slovní znění při diagnostické zprávě IHL (indikace horkého ložiska) stupně STOP?",
+        moznosti: ["„Vlak číslo, indikováno horké ložisko stupně STOP, okamžitě zastavte!“", "„Vlak číslo, indikováno horké ložisko stupně STOP, stůj, stůj!“", "„Vlak číslo, IHL STOP“"],
+        spravna: "„Vlak číslo, indikováno horké ložisko stupně STOP, okamžitě zastavte!“",
+        obrazek: null
+    },
+    // 80.
+    {
+        otazka: "80. Před odjezdem vlaku po obdržení rozkazu k odjezdu strojvedoucí zjistí, že nemůže s vlakem odjet (porucha HV, porucha dveří, VZ,….). Jaký bude jeho další postup?",
+        moznosti: ["Musí tuto skutečnost neprodleně oznámit výpravčímu", "Musí tuto skutečnost neprodleně oznámit strojmistrovi", "Začne zjišťovat závadu a dle svých možností pracovat na jejím odstranění. Pokud do 20 minut závadu neodstraní, oznámí výpravčímu neschopnost vozidla"],
+        spravna: "Musí tuto skutečnost neprodleně oznámit výpravčímu", 
+        obrazek: null
+    },
+    // 81.
+    {
+        otazka: "81. K jakému spojení se používá zkrácená volba v systému GSM-R?",
+        moznosti: ["Ke spojení strojvedoucí – vedoucí posunové čety", "Ke spojení strojvedoucí – strojvedoucí", "Ke spojení strojvedoucí – výpravčí konkrétní stanice"],
+        spravna: "Ke spojení strojvedoucí – výpravčí konkrétní stanice", 
+        obrazek: null
+    },
+    // 82.
+    {
+        otazka: "82. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["\"Povolte brzdy úplně\"  dává strojvedoucí vedoucího vozidla,  přikazuje strojvedoucím činných hnacích vozidel zařazených do soupravy zvýšit tažnou sílu hnacího vozidla,  zaměstnancům obsluhujícím ruční brzdy přikazuje tato návěst úplné povolení ručních brzd, touto návěstí musí strojvedoucí vedoucího vozidla jedoucího vlaku ve stanici potvrdit převzetí pokynu návěsti Odjezd", "\"Požární poplach\"", "\"Svolávání všech zaměstnanců\""],
+        spravna: "\"Povolte brzdy úplně\"  dává strojvedoucí vedoucího vozidla,  přikazuje strojvedoucím činných hnacích vozidel zařazených do soupravy zvýšit tažnou sílu hnacího vozidla,  zaměstnancům obsluhujícím ruční brzdy přikazuje tato návěst úplné povolení ručních brzd, touto návěstí musí strojvedoucí vedoucího vozidla jedoucího vlaku ve stanici potvrdit převzetí pokynu návěsti Odjezd", 
+        obrazek: "obrazky2025/82.jpg"
+    },
+    // 83.
+    {
+        otazka: "83. Jaký je název návěsti?",
+        moznosti: ["„Rychlost 100 km/h a očekávejte rychlost 40 km/h“", "„Rychlost 120 km/h a očekávejte rychlost 60 km/h“", "„Rychlost 80 km/h a očekávejte rychlost 40 km/h“"],
+        spravna: "„Rychlost 100 km/h a očekávejte rychlost 40 km/h“", 
+        obrazek: "obrazky2025/83.jpg"
+    },
+    // 84.
+    {
+        otazka: "84. Jaká návěst může být na nejbližším vjezdovém návěstidle?",
+        moznosti: ["„Rychlost 40 km/h a výstraha“", "„Očekávejte rychlost 40 km/h“", "„Výstraha“"],
+        spravna: "„Rychlost 40 km/h a výstraha“", 
+        obrazek: "obrazky2025/84.jpg"
+    },
+    // 85.
+    {
+        otazka: "85. Jaká návěst může být na vjezdovém návěstidle?",
+        moznosti: ["„Přivolávací návěst“", "„Rychlost 40 km/h a výstraha“", "„Výstraha“"],
+        spravna: "„Přivolávací návěst“", 
+        obrazek: "obrazky2025/85.jpg"
+    },
+    // 86.
+    {
+        otazka: "86. Jaká návěst může být na nejbližším oddílovém návěstidle?",
+        moznosti: ["„Očekávejte rychlost 60 km/h“", "„Stůj“", "„Volno“"],
+        spravna: "„Očekávejte rychlost 60 km/h“", 
+        obrazek: "obrazky2025/86.jpg"
+    },
+    // 87.
+    {
+        otazka: "87. Jakou nejvyšší rychlostí může jet vlak v případě, že není na HV přenášen kód VZ, tlačítko bdělosti periodicky prověřuje bdělost strojvedoucího a strojvedoucí o této závadě ví?",
+        moznosti: ["100 km/h", "30 km/h", "120 km/h"],
+        spravna: "100 km/h", 
+        obrazek: "obrazky2025/87.jpg"
+    },
+    // 88.
+    {
+        otazka: "88. Jakými písmeny je označeno oddílové návěstidlo automatického hradla?",
+        moznosti: ["„Lo“ nebo „So“", "„Ahr“", "Návěstidlo automatického hradla se neoznačuje"],
+        spravna: "„Lo“ nebo „So“", 
+        obrazek: null
+    },
+    // 89.
+    {
+        otazka: "89. Vlak zastavil u oddílového návěstidla AB s návěstí „Stůj“. Smí vlak pokračovat v další jízdě?",
+        moznosti: ["Ano, ale pouze na pokyn výpravčího", "Ano, po zastavení pokračuje ihned v jízdě podle rozhledových poměrů k následujícímu oddílovému návěstidlu AB a dále podle jeho návěsti", "Ano, po zastavení vyčká 5 minut a pak pokračuje ihned v jízdě podle rozhledových poměrů k následujícímu oddílovému návěstidlu AB a dále podle jeho návěsti"],
+        spravna: "Ano, po zastavení pokračuje ihned v jízdě podle rozhledových poměrů k následujícímu oddílovému návěstidlu AB a dále podle jeho návěsti", // Správná odpověď dle zadání: 89a)
+        obrazek: "obrazky2025/89.jpg"
+    },
+    // 90.
+    {
+        otazka: "90. Strojvedoucí u výchozího vlaku nevidí návěst nejbližšího hlavního návěstidla a na návěstním opakovači svítí zelené světlo. V TJŘ ve sloupci 2 není uvedena žádná značka. Jaký bude další postup strojvedoucího v čase odjezdu?",
+        moznosti: ["Uvede vlak do pohybu", "Uvede vlak do pohybu maximální rychlostí 40 km/h podle rozhledových poměrů a s pohotovostí zastavit u nejbližšího hlavního návěstidla", "Zavolá výpravčímu a vyžádá si výpravu vlaku jiným způsobem než návěstí hlavního návěstidla"],
+        spravna: "Uvede vlak do pohybu", 
+        obrazek: "obrazky2025/90.jpg"
+    },
+    // 91.
+    {
+        otazka: "91. V průběhu jízdy prostorovým oddílem kódované tratě dojde k náhlé změně světla na návěstním opakovači, a to ze žlutého na červené. Nejedná se o krátkodobé prokmitnutí červeného světla a na další návěstidlo není vidět. Strojvedoucí bude dále postupovat takto:",
+        moznosti: ["Řídí se významem světla návěstního opakovače", "Jedná, jakoby na návěstním opakovači stále svítilo žluté světlo, přičemž na návěstní opakovač v tomto prostorovém oddílu nebere zřetel", "Bez prodlení sníží rychlost na maximálně 30 km/h, přičemž na návěstní opakovač v tomto prostorovém oddílu nebere zřetel"],
+        spravna: "Řídí se významem světla návěstního opakovače", 
+        obrazek: null
+    },
+    // 92.
+    {
+        otazka: "92. Vlak zastavil ve stanici Praha-Libeň. V jaký čas může odjet?",
+        moznosti: ["Ihned, po výstupu cestujících", "Ve 22:47", "Ve 22:48"],
+        spravna: "Ihned, po výstupu cestujících", 
+        obrazek: "obrazky2025/92.jpg"
+    },
+    // 93.
+    {
+        otazka: "93. Vlak Os 14569 stojí na zastávce na širé trati, která má přístup na nástupiště pomocí úrovňového přejezdu, který je v činnosti. Po 1. TK proti správnému směru ho předjíždí Ex 51. Jaký bude postup strojvedoucího Ex 51 při průjezdu zastávkou až k přejezdu?",
+        moznosti: ["Musí varovat osoby návěstí „Pozor“, dokud čelo vlaku nemine přejezd", "Nečiní žádné zvláštní opatření", "Nesmí při průjezdu zastávkou překročit rychlost 100 km/h, dokud čelo vlaku nemine přejezd"],
+        spravna: "Musí varovat osoby návěstí „Pozor“, dokud čelo vlaku nemine přejezd",
+        obrazek: "obrazky2025/93.jpg"
+    },
+    // 94.
+    {
+        otazka: "94. Strojvedoucí vede vlak na trati s automatickým blokem dle svého TJŘ nejvyšší stanovenou rychlostí 160 km/h a vzhledem ke skutečným brzdícím procentům rozkládá svoji zábrzdnou dráhu na dvě zábrzdné vzdálenosti. Na návěstním opakovači se po minutí oddílového návěstidla AB rozsvítí žluté světlo. Na jakou novou rychlost musí strojvedoucí snížit rychlost vlaku u následujícího oddílového návěstidla AB?",
+        moznosti: ["140 km/h", "130 km/h", "100 km/h"],
+        spravna: "140 km/h", 
+        obrazek: null
+    },
+    // 95.
+    {
+        otazka: "95. Úsek Bálkov - Cvrkov je dvoukolejná trať. Lze uvedený úsek pojíždět proti správnému směru?",
+        moznosti: ["Ano", "Ne", "Lze zjistit pouze z TTP"],
+        spravna: "Ano", 
+        obrazek: "obrazky2025/95.jpg"
+    },
+    // 96.
+    {
+        otazka: "96. Úsek Bálkov - Cvrkov je dvoukolejná trať. Lze uvedený úsek pojíždět proti správnému směru?",
+        moznosti: ["Ano", "Ne", "Lze zjistit pouze z TTP"],
+        spravna: "Ne", 
+        obrazek: "obrazky2025/96.jpg"
+    },
+    // 97.
+    {
+        otazka: "97. Strojvedoucí na trati s pravostranným provozem projíždí stanicí Cvrkov. Vlaková cesta je postavena na 2. TK ve směru Liptákov. Jaký bude další postup strojvedoucího, pokud není zpraven žádným písemným rozkazem?",
+        moznosti: ["V úseku Cvrkov – Liptákov se jedná o jízdu po nesprávné koleji, strojvedoucí neprodleně zastaví vlak a ohlásí se výpravčímu", "V úseku Cvrkov – Liptákov se jedná o jízdu po nesprávné koleji, strojvedoucí pokračuje v jízdě do další stanice, kde zastaví a ohlásí se výpravčímu", "V úseku Cvrkov – Liptákov se jedná o jízdu proti správnému směru, strojvedoucí pokračuje v další jízdě"],
+        spravna: "V úseku Cvrkov – Liptákov se jedná o jízdu po nesprávné koleji, strojvedoucí neprodleně zastaví vlak a ohlásí se výpravčímu", 
+        obrazek: "obrazky2025/97.jpg"
+    },
+    // 98.
+    {
+        otazka: "98. Čím se řídí strojvedoucí vlaku jedoucího po objízdné trase ve stanici?",
+        moznosti: ["Vlak jede pod svým původním číslem podle podmínek stanovených Správou železnic v tabulkách pro objízdné trasy", "Vlak jede podle podmínek stanovených v TTP", "Vlaku je přidělen jiný TJŘ"],
+        spravna: "Vlak jede pod svým původním číslem podle podmínek stanovených Správou železnic v tabulkách pro objízdné trasy", 
+        obrazek: null
+    },
+    // 99.
+    {
+        otazka: "99. Strojvedoucí při spatření této návěsti:",
+        moznosti: ["Předpokládá závadu protijedoucího vlaku a sleduje jeho soupravu, zjištěné ohlásí výpravčímu", "Předpokládá překážku na trati a využije všech dostupných prostředků k zastavení svého vlaku", "Podle možností musí zastavit na nejbližším vhodném místě a závadu oznámí výpravčímu"],
+        spravna: "Předpokládá překážku na trati a využije všech dostupných prostředků k zastavení svého vlaku", // Správná odpověď dle zadání: 99b)
+        obrazek: "obrazky2025/99.jpg"
+    },
+    // 100.
+    {
+        otazka: "100. Po projetí odjezdového návěstidla v poloze „Stůj“ z důvodu náhlé změny návěstního znaku jestrojvedoucí povinen:",
+        moznosti: ["Zastavit na vhodném místě a ohlásit mimořádnou událost na ohlašovací pracoviště", "Zastavit rychločinným brzděním, poté zjistit, zda při brzdění nedošlo ke zranění osob ve vlaku a toto oznámit výpravčímu", "Zastavit provozním brzděním a toto oznámit výpravčímu a strojmistrovi"],
+        spravna: "Zastavit rychločinným brzděním, poté zjistit, zda při brzdění nedošlo ke zranění osob ve vlaku a toto oznámit výpravčímu", 
+        obrazek: null
+    },
+    // 101.
+    {
+        otazka: "101. Při srážce vlaku se zvěří nedošlo ke zranění osob ve vlaku, ale došlo k poškození a neschopnosti vozidla. Strojvedoucí je povinen:",
+        moznosti: ["Dojet do nejbližší stanice výběhem a vzniklou skutečnost ohlásit strojmistrovi", "Zastavit vlak a ihned ohlásit mimořádnou událost výpravčímu a strojmistrovi", "Zastavit vlak, ohlásit Policii podezření na obecné ohrožení, další jízdu může povolit pouze vyšetřující policista ve spolupráci s výpravčím"],
+        spravna: "Zastavit vlak a ihned ohlásit mimořádnou událost výpravčímu a strojmistrovi",
+        obrazek: null
+    },
+    // 102.
+    {
+        otazka: "102. Strojvedoucí zjistí poruchu vozidlové radiostanice v systému GSM-R. Jak bude dále postupovat?",
+        moznosti: ["Závadu ohlásí a postupuje dle dohodnutého náhradního nebo nouzového rádiového spojení nebo nouzového spojení", "Zašle SMS zprávu s číslem vlaku a svým příjmením na tel. číslo Správy železnic 972 110 000 a tím provede nouzovou registraci vlaku do systému GSM-R", "Závada se neohlašuje, strojvedoucí přejde na náhradní spojení"],
+        spravna: "Závadu ohlásí a postupuje dle dohodnutého náhradního nebo nouzového rádiového spojení nebo nouzového spojení",
+        obrazek: null
+
+    },
+    // 103.
+    {
+        otazka: "103. Strojvedoucí zjistil za jízdy na trati požár ve vlaku. Jak bude dále postupovat?",
+        moznosti: ["Musí dbát na to, aby pokud možno nezastavil v tunelu ani na jiném místě, kde by byla ztížena případná evakuace osob nebo zásah záchranných složek", "Zásadně nezastavuje na trati", "Zastaví ihned bez ohledu na polohu vlaku"],
+        spravna: "Musí dbát na to, aby pokud možno nezastavil v tunelu ani na jiném místě, kde by byla ztížena případná evakuace osob nebo zásah záchranných složek",
+        obrazek: null
+
+    },
+    // 104.
+    {
+        otazka: "104. Strojvedoucí není zpraven žádným písemným rozkazem o zhoršených povětrnostních poměrech a za jízdy vlaku zjistí, že dochází k pohybu větví stromů a silnému nárazovému větru. Jaký bude jeho další postup?",
+        moznosti: ["Upraví rychlost jízdy tak, aby na vzdálenost rovnající se délce koleje, na kterou vidí před sebou, podle možnosti s využitím všech dostupných prostředků zastavil před případnou překážkou nebo nesjízdným místem na trati", "Musí dodržet zásady pro jízdu podle rozhledových poměrů", "Zastaví na nejbližším vhodném místě, ohlásí vzniklou situaci výpravčímu a vyčká dalších pokynů"],
+        spravna: "Upraví rychlost jízdy tak, aby na vzdálenost rovnající se délce koleje, na kterou vidí před sebou, podle možnosti s využitím všech dostupných prostředků zastavil před případnou překážkou nebo nesjízdným místem na trati",
+        obrazek: "obrazky2025/104.jpg"
+
+    },
+    // 105.
+    {
+        otazka: "105. Vlak byl po odjezdu od nástupiště zastaven návěstí „Stůj, zastavte všemi prostředky“. Za jakých podmínek může vlak pokračovat v další jízdě, pokud byl výpravčí o zastavení vlaku návěstí „Stůj, zastavte všemi prostředky“ informován ?",
+        moznosti: ["Po odstranění závady a po výpravě vlaku návěstí hlavního návěstidla, pokud výpravčí výpravu vlaku tímto návěstidlem neodvolal", "Po odstranění závady a výpravě vlaku jiným způsobem než návěstí hlavního návěstidla", "Po odstranění závady a po obdržení svolení k jízdě od výpravčího např. „Vlak 5555 může pokračovat v jízdě“"],
+        spravna: "Po odstranění závady a po výpravě vlaku návěstí hlavního návěstidla, pokud výpravčí výpravu vlaku tímto návěstidlem neodvolal",
+        obrazek: "obrazky2025/105.jpg"
+
+    },
+    // 106.
+    {
+        otazka: "106. Strojvedoucí potřebuje ohlásit mimořádnou událost, která vznikla na širé trati. Základní anináhradní rádiové spojení nelze pro poruchu použít. Strojvedoucí je nucen použít nouzové spojenípomocí mobilního telefonu. Ze kterého dokumentu zjistí telefonní číslo na ohlašovací pracoviště?",
+        moznosti: ["V TTP", "V ZPD (Základní přepravní dokumentace)", "V SJŘ"],
+        spravna: "V TTP",
+        obrazek: null
+
+    },
+    // 107.
+    {
+        otazka: "107. Závazné slovní znění pro návěst „Stůj, zastavte všemi prostředky“ danou radiostanicí pro konkrétní vlak je:",
+        moznosti: ["„Vlak 123 ve stanici Lhota stop, stop.“", "„Vlak 123 stůj, zastavte všemi prostředky.“", "„Vlak 123 dobrá.“"],
+        spravna: "„Vlak 123 ve stanici Lhota stop, stop.“",
+        obrazek: null
+
+    },
+    // 108.
+    {
+        otazka: "108. Závazné slovní znění pro návěst „Stůj, zastavte všemi prostředky“ danou radiostanicí pro konkrétní traťový úsek je:",
+        moznosti: ["„Všechny vlaky v trati Lhota – Hoštice stop, stop.“", "„Všechny vlaky v trati Lhota – Hoštice stůj, zastavte všemi prostředky.“", "„Všechny vlaky v trati Lhota – Hoštice dobrá, dobrá, dobrá.“"],
+        spravna: "„Všechny vlaky v trati Lhota – Hoštice stop, stop.“",
+        obrazek: null
+
+    },
+    // 109.
+    {
+        otazka: "109. Může výpravčí požádat strojvedoucího ve stanici s DOZ o přesvědčení se o zjevné příčině nemožnosti přestavení výhybky?",
+        moznosti: ["Ano, může. V případě, že je strojvedoucí na vlaku (PMD, posunovém dílu) sám, může tuto žádost odmítnout", "Ne, tento úkon nelze zařizovat zaměstnanci dopravce", "Ano, ale pouze pokud se jedná o strojvedoucího vlaku bez přepravy cestujících"],
+        spravna: "Ano, může. V případě, že je strojvedoucí na vlaku (PMD, posunovém dílu) sám, může tuto žádost odmítnout",
+        obrazek: null
+
+    },
+    // 110.
+    {
+        otazka: "110. Jak strojvedoucí ohlásí traťovému dispečerovi ve stanici DOZ zjištění, že protijedoucí vlak vjel do stanice celý?",
+        moznosti: ["„Vlak ve stanici Liptákov na čtvrté koleji má návěst Konec vlaku. Melen“", "Vlak na koleji číslo čtyři je celý", "Vlak na koleji číslo čtyři je celý"],
+        spravna: "„Vlak ve stanici Liptákov na čtvrté koleji má návěst Konec vlaku. Melen“",
+        obrazek: null
+
+    },
+    // 111.
+    {
+        otazka: "111. Z jakého dokumentu zjistí strojvedoucí Číslo telefonu na „ohlašovací pracoviště“?",
+        moznosti: ["Seznam telefonních čísel pro zaměstnance dopravce", "Provozního řádu MRS", "TTP, tabulka 03 b"],
+        spravna: "TTP, tabulka 03 b",
+        obrazek: null
+
+    },
+    // 112.
+    {
+        otazka: "112. Strojvedoucí slyší v radiostanici toto hlášení:\"příjmu, stop, stop\" Jaký bude jeho postup?",
+        moznosti: ["Okamžitě zavede rychločinné brždění a zastaví všemi dostupnými prostředky", "Okamžitě kontaktuje výpravčího (dispečera)", "V další stanici zastaví a zjistí co se děje"],
+        spravna: "Okamžitě zavede rychločinné brždění a zastaví všemi dostupnými prostředky",
+        obrazek: null
+
+    },
+    // 113.
+    {
+        otazka: "113. Strojvedoucí zjistí za jízdy vlaku na dvoukolejné trati překážku v sousední koleji. Jak bude dále postupovat?",
+        moznosti: ["Musí na hnacím vozidle rozsvítit návěst Stůj, zastavte všemi prostředky, případně ji při zpozorování protijedoucích vozidel nebo za snížené viditelnosti doplnit i návěstí slyšitelnou a co nejrychleji zpravit výpravčího a řídit se jeho pokyny. V případě nebezpečí z prodlení použije strojvedoucí i výpravčí všech dostupných prostředků k zastavení vlaku, jehož jízda je zjištěnou překážkou ohrožená", "Zavede nouzové hlášení a ohlásí překážku na trati", "Informuje výpravčího a zjistí kontakt na strojvedoucího nejbližšího protijedoucí vlaku a informuje ho o překážce"],
+        spravna: "Musí na hnacím vozidle rozsvítit návěst Stůj, zastavte všemi prostředky, případně ji při zpozorování protijedoucích vozidel nebo za snížené viditelnosti doplnit i návěstí slyšitelnou a co nejrychleji zpravit výpravčího a řídit se jeho pokyny. V případě nebezpečí z prodlení použije strojvedoucí i výpravčí všech dostupných prostředků k zastavení vlaku, jehož jízda je zjištěnou překážkou ohrožená",
+        obrazek: null
+
+    },
+    // 114.
+    {
+        otazka: "114. Strojvedoucí posunového dílu ve stanici Libavá slyší v radiostanici toto hlášení: Pozor, pozor, všechny vlaky na příjmu, stop. stop. Jaký bude jeho další postup:",
+        moznosti: ["Okamžitě zavede rychločinné brždění a zastaví všemi dostupnými prostředky", "Okamžitě kontaktuje výpravčího (dispečera)", "V další stanici zastaví a zjistí co se děje"],
+        spravna: "Okamžitě zavede rychločinné brždění a zastaví všemi dostupnými prostředky",
+        obrazek: null
+
+    },
+    // 115.
+    {
+        otazka: "115. Platí pro PMD krycí návěstidlo?",
+        moznosti: ["Neplatí", "Platí, pokud nebyl doručen nebo sepsán rozkaz o jeho neplatnosti", "Platí, ale strojvedoucí se jeho návěstmi neřídí"],
+        spravna: "Platí, pokud nebyl doručen nebo sepsán rozkaz o jeho neplatnosti",
+        obrazek: null
+
+    },
+    // 116.
+    {
+        otazka: "116. Jaká je rychlost PMD pro uváznutý vlak na trati, když není známa jeho kilometrická poloha?",
+        moznosti: ["30 km/h od vjezdového návěstidla z opačné strany", "20 km/h od vjezdového návěstidla z opačné strany", "15 km/h od vjezdového návěstidla z opačné strany"],
+        spravna: "20 km/h od vjezdového návěstidla z opačné strany",
+        obrazek: null
+
+    },
+    // 117.
+    {
+        otazka: "117. Jak musí být PMD označen?",
+        moznosti: ["2 bílými pozičními světly vpředu i vzadu", "Návěstmi pro vlak", "Žlutou deskou umístěnou na čele HV vpravo ve směru jízdy vlaku"],
+        spravna: "Návěstmi pro vlak",
+        obrazek: null
+    },
+    // 118.
+    {
+        otazka: "118. Musí být strojvedoucí PMD informován o vjezdu na obsazenou kolej?",
+        moznosti: ["Ano, vždy", "Nemusí, protože jede podle rozhledových poměrů", "Ano. Ústně, telekomunikačním zařízením nebo sepsáním písemného rozkazu"],
+        spravna: "Nemusí, protože jede podle rozhledových poměrů",
+        obrazek: null
+    },
+    // 119.
+    {
+        otazka: "119. PMD při návratu z trati musí zastavit nejdále:",
+        moznosti: ["U seřaďovacího návěstidla", "U hlavního návěstidla příslušné koleje", "U námezníku na odjezdové straně"],
+        spravna: "U hlavního návěstidla příslušné koleje",
+        obrazek: "obrazky2025/119.jpg"
+    },
+    // 120.
+    {
+        otazka: "Nepředpokládaný návrat vlaku (PMD) z trati je bez souhlasu výpravčího:",
+        moznosti: ["Zakázán", "Dovolen až k vjezdovému návěstidlu, nekříží-li trať přejezd", "Dovolen nejdále k seřaďovacímu návěstidlu"],
+        spravna: "Zakázán",
+        obrazek: null
+    },
+    // 121.
+    {
+        otazka: "121. PMD se uskutečňuje z důvodu zjištění volnosti a průjezdnosti tratě. Smí tento PMD přepravovat cestující?",
+        moznosti: ["Ne", "Ano", "Ano, pokud v čele PMD bude zařazena lokomotiva"],
+        spravna: "Ne",
+        obrazek: null
+    },
+    // 122.
+    {
+        otazka: "122. PMD odjíždí ze stanice. O platnosti návěstí dovolující jízdu vlaku výpravčí strojvedoucího nezpravil. Platí pro PMD označník?",
+        moznosti: ["Ano", "Ne", "Platí pouze v případě, že je tato skutečnost uvedena v rozkaze V PMD"],
+        spravna: "Ne",
+        obrazek: "obrazky2025/122.jpg"
+    },
+    // 123.
+    {
+        otazka: "123. Jak bude zpraven strojvedoucí PMD, pokud mají pro odjezd PMD ze stanice platit návěstiodjezdových (cestových) návěstidel?",
+        moznosti: ["Ústně nebo telekomunikačním zařízením", "Písemným rozkazem V PMD", "Písemným rozkazem V PsD1"],
+        spravna: "Písemným rozkazem V PsD1",
+        obrazek: null
+    },
+    // 124.
+    {
+        otazka: "124. PMD se blíží k oddílovému návěstidlu s návěstí „Stůj“. Platí oddílové návěstidlo pro PMD?",
+        moznosti: ["Oddílová návěstidla pro PMD neplatí", "Oddílová návěstidla pro PMD platí", "Strojvedoucí PMD musí před návěstidlem zastavit a vyžádat si další pokyny k jízdě od výpravčího přední stanice přímo nebo prostřednictvím výpravčího zadní stanice"],
+        spravna: "Oddílová návěstidla pro PMD neplatí",
+        obrazek: null
+    },
+    // 125.
+    {
+        otazka: "125. Jak je prováděn návrat vlaku z trati, který zcela opustil obvod stanice?",
+        moznosti: ["Jako PMD", "Jako vlak", "Jako posun"],
+        spravna: "Jako PMD",
+        obrazek: null
+    },
+    // 126.
+    {
+        otazka: "126. Jaké volací číslo zadá strojvedoucí při volání v systému GSM-R pokud volá vedoucí vozidlo PMD 865432?",
+        moznosti: ["2 865432 01", "865432", "865432 01"],
+        spravna: "2 865432 01",
+        obrazek: null
+    },
+    // 127.
+    {
+        otazka: "127. Strojvedoucí vedoucího vozidla vlaku, z něhož je ovládáno brzdění při PMD, zadá na radiostanici vsystému GSM-R:",
+        moznosti: ["Celé číslo pro PMD dle písemného rozkazu", "Rozlišovací volací číslici 8 a na počet šesti číslic doplní 00000", "Nenastavuje volací číslo, neboť pro PMD je v systému GSM-R použita zkrácená volba"],
+        spravna: "Celé číslo pro PMD dle písemného rozkazu",
+        obrazek: null
+    },
+    // 128.
+    {
+        otazka: "128. Jak bude strojvedoucí jednat při jízdě PMD k oddílovému návěstidlu s návěstí Stůj?",
+        moznosti: ["Strojvedoucí pokračuje v jízdě bez dalších opatření, oddílové návěstidlo pro PMD neplatí", "Strojvedoucí před oddílovým návěstidlem zastaví a vyžádá si další pokyny k jízdě od výpravčího přední stanice přímo nebo prostřednictvím výpravčího zadní stanice", "Strojvedoucí musí před oddílovým návěstidlem zastavit a po zastavení pokračovat v další jízdě podle rozhledových poměrů"],
+        spravna: "Strojvedoucí pokračuje v jízdě bez dalších opatření, oddílové návěstidlo pro PMD neplatí",
+        obrazek: "obrazky2025/128.jpg"
+    },
+    // 129.
+    {
+        otazka: "129. PMD odjíždí ze stanice. O platnosti návěstí dovolující jízdu vlaku výpravčí strojvedoucího nezpravil. Platí pro PMD návěstidlo Se 5 ve funkci označníku?",
+        moznosti: ["Ano", "Ne", "Platí pouze v případě, že je tato skutečnost uvedena v rozkaze V PMD"],
+        spravna: "Ano",
+        obrazek: "obrazky2025/129.jpg"
+    },
+    // 130.
+    {
+        otazka: "130. PMD odjíždí ze stanice. O platnosti návěstí dovolující jízdu vlaku výpravčí strojvedoucího zpravil písemným rozkazem. Platí pro PMD návěstidlo Se 5 ve funkci označníku?",
+        moznosti: ["Ano", "Ne", "Platí pouze v případě, že je tato skutečnost uvedena v rozkaze PsD1"],
+        spravna: "Ne",
+        obrazek: "obrazky2025/130.jpg"
+    },
+    // 131.
+    {
+        otazka: "131. PMD odjíždí ze stanice. O platnosti návěstí dovolující jízdu vlaku výpravčí strojvedoucího zpravil písemným rozkazem. Platí pro PMD označník?",
+        moznosti: ["Ano", "Ne", "Platí pouze v případě, že je tato skutečnost uvedena v rozkaze V PMD"],
+        spravna: "Ne",
+        obrazek: "obrazky2025/131.jpg"
+    },
+    // 132.
+    {
+        otazka: "132. V nácestné stanici Križná je nutno odstavit z vlaku druhý vůz za lokomotivou. Doprovod vlaku nemá v této stanici znalost místních poměrů pro posun. Lze toto odstavení provést?",
+        moznosti: ["Ano, výpravčí seznámí členy doprovodu vlaku s místními poměry ve stanici", "Ne, ve stanici, kde nemá doprovod vlaku znalost místních poměrů, není možno posunovat s posunovou četou", "Ne, ve stanici, kde nemá doprovod vlaku znalost místních poměrů, je zakázáno posunovat"],
+        spravna: "Ano, výpravčí seznámí členy doprovodu vlaku s místními poměry ve stanici",
+        obrazek: "obrazky2025/132.jpg"
+    },
+    // 133.
+    {
+        otazka: "133. Jakým způsobem jede strojvedoucí při posunu?",
+        moznosti: ["Se zvýšenou opatrností, nejvýše stanovenou rychlostí", "Vždy podle rozhledových poměrů", "Dle svého uvážení, nejvýše traťovou rychlostí"],
+        spravna: "Vždy podle rozhledových poměrů",
+        obrazek: null
+    },
+    // 134.
+    {
+        otazka: "134. O jaký posun se jedná při objíždění soupravy vlaku?",
+        moznosti: ["O posun bez posunové čety", "O posun s posunovou četou", "O formě posunu (s/bez posunové čety) rozhodne výpravčí"],
+        spravna: "O posun bez posunové čety",
+        obrazek: null
+    },
+    // 135.
+    {
+        otazka: "135. Objížděná souprava, zajištěná odvětraným brzd. potrubím, může být spolehlivě zajištěna proti ujetí nejdéle:",
+        moznosti: ["20 minut", "30 minut", "40 minut"],
+        spravna: "30 minut",
+        obrazek: null
+    },
+    // 136.
+    {
+        otazka: "136. Hnací vozilo ř. 814 odstupuje v ŽST Baníkov od vlaku 9800 do depa. Kdo je zaměstnancem řídící mposun?",
+        moznosti: ["Výpravčí", "Signalista", "Strojvedoucí"],
+        spravna: "Strojvedoucí",
+        obrazek: null
+    },
+    // 137.
+    {
+        otazka: "137. V hranicích depa stojí lokomotiva jedoucí na vlak. Kdo je zaměstnancem řídícím posun?",
+        moznosti: ["Strojvedoucí", "Dozorce depa", "Výpravčí"],
+        spravna: "Strojvedoucí",
+        obrazek: null
+    },
+    // 138.
+    {
+        otazka: "138. Po příjezdu vlaku do stanice Dukla odstupuje hnací vozidlo do depa. S kým strojvedoucí sjednává posun?",
+        moznosti: ["Strojvedoucí při odstupu hnacího vozidla do depa posun nesjednává", "S výpravčím", "S vedoucím posunu"],
+        spravna: "S výpravčím",
+        obrazek: null
+    },
+    // 139.
+    {
+        otazka: "139. Strojvedoucí zastavil v cílové ŽST Borišov a je nutno provést pravidelný posun s posunovou četou. Ze kterého dokumentu strojvedoucí zjistí, kdo bude vedoucím posunové čety?",
+        moznosti: ["Základní dopravní dokumentace (ZDD) – část A příslušné stanice", "Příloha č. 3 předpisu ČD D2 a Základní přepravní dokumentace (ZPD) – část B příslušné stanice", "Staniční přípojový řád příslušné stanice"],
+        spravna: "Příloha č. 3 předpisu ČD D2 a Základní přepravní dokumentace (ZPD) – část B příslušné stanice",
+        obrazek: null
+    },
+    // 140.
+    {
+        otazka: "140. Jaký bude postup strojvedoucího po příjezdu vlaku 692 do konečné stanice, kde bude lokomotiva od vlaku v režimu GSM-R posunovat do depa?",
+        moznosti: ["Strojvedoucí volá výpravčímu s číslem vlaku 692 a s funkčním kódem 01 a sjedná posun", "Strojvedoucí volá výpravčímu s číslem vlaku 692 a s funkčním kódem 04 a sjedná posun", "Strojvedoucí volá výpravčímu s číslem vlaku 692 a s funkčním kódem 03 a sjedná posun"],
+        spravna: "Strojvedoucí volá výpravčímu s číslem vlaku 692 a s funkčním kódem 01 a sjedná posun",
+        obrazek: null
+    },
+    // 141.
+    {
+        otazka: "141. V jakých případech bude nastaven na radiostanici v systému GSM-R funkční kód 03?",
+        moznosti: ["Posun na místo odstavení HV ve stanici", "Posun z depa", "V případě jízdy posunu mezi dopravnami (PMD)"],
+        spravna: "Posun na místo odstavení HV ve stanici",
+        obrazek: null
+    },
+    // 142.
+    {
+        otazka: "142. Souhlas k jízdě rádiovým zařízením pro vlak Os 6543 stojící na třetí koleji ve stanici Jeníkov zní:",
+        moznosti: ["„Vlak 6543 ve stanici Jeníkov ze třetí koleje za návěstidlo L3 posun dovolen“", "„Vlak 6543 ze třetí koleje za návěstidlo L3 posun dovolen“", "„Vlak 6543 ze třetí koleje posun dovolen“"],
+        spravna: "„Vlak 6543 ve stanici Jeníkov ze třetí koleje za návěstidlo L3 posun dovolen“",
+        obrazek: null
+    },
+    // 143.
+    {
+        otazka: "143. Strojvedoucí obdržel od výpravčího tuto informaci: „Výpravčí Kotlíkov, pro lok. od vlaku 10254 ze čtvrté koleje vyjedeme na slatinské zhlaví za Se11 a najedeme na první koleji na vlak 10258. Posun dovolen od 10:30 do 10:45 hod. Funkční kód RDST 04.“. Strojvedoucí kvůli mlze nevidí na návěst nejbližšího hlavního návěstidla. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Uvede posunový díl do pohybu tak, aby nejpozději před nejbližším hlavním návěstidlem zastavil", "Nesmí uvést posunový díl do pohybu dokud neuvidí návěst „Posun dovolen“ na nejbližším hlavním návěstidle", "Musí si vždy vyžádat od výpravčího „Souhlas k posunu“ telekomunikačním zařízením"],
+        spravna: "Uvede posunový díl do pohybu tak, aby nejpozději před nejbližším hlavním návěstidlem zastavil",
+        obrazek: "obrazky2025/143.jpg"
+    },
+    // 144.
+    {
+        otazka: "144. Strojvedoucí bude po zastavení vlaku odstupovat do depa a obdržel od posunovače tuto informaci: „Lokomotiva od vlaku 9890 na druhé koleji je odvěšená“. Strojvedoucí s výpravčím nekomunikoval. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Nesmí zahájit posun", "Smí zahájit posun, na nejbližším hlavním návěstidle je návěst „Posun dovolen“", "Smí zahájit posun pouze k nejbližšímu hlavnímu návěstidlu a dále dle pokynů výpravčího"],
+        spravna: "Nesmí zahájit posun",
+        obrazek: "obrazky2025/144.jpg"
+    },
+    // 145.
+    {
+        otazka: "145. Strojvedoucí bude po zastavení vlaku odstupovat do depa. Po výstupu cestujících se změní návěst nejbližšího hlavního návěstidla z návěsti „Stůj“ na návěst „Posun dovolen“. Komunikace mezi výpravčím a strojvedoucím neproběhla. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Nesmí zahájit posun", "Smí zahájit posun, na nejbližším hlavním návěstidle je návěst „Posun dovolen“", "Smí zahájit posun pouze k nejbližšímu hlavnímu návěstidlu a dále dle pokynu výpravčího"],
+        spravna: "Nesmí zahájit posun",
+        obrazek: "obrazky2025/145.jpg"
+    },
+    // 146.
+    {
+        otazka: "146. Strojvedoucí obdržel od výpravčího tuto informaci: „Výpravčí Baníkov, pro motor od vlaku 19999 ze čtvrté koleje vyjedeme na slatinské zhlaví za Se22 a najedeme na první koleji na vlak 19998. Funkční kód RDST 01.“. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Smí zahájit posun k námezníku výhybky, před kterým musí zastavit dokud nedostane další pokyn k jízdě", "Nesmí zahájit posun", "Smí zahájit posun a posunovat i za námezník výhybky protože na seřaďovacím návěstidle svítí návěst „Souhlas k posunu“"],
+        spravna: "Smí zahájit posun k námezníku výhybky, před kterým musí zastavit dokud nedostane další pokyn k jízdě",
+        obrazek: "obrazky2025/146.jpg"
+    },
+    // 147.
+    {
+        otazka: "147. Jak je zpraven strojvedoucí o poruše PZZ při posunu přes přejezdy s poruchou PZZ?",
+        moznosti: ["Vždy písemným rozkazem", "Ústně", "Telekomunikačním zařízením nebo rozhlasem"],
+        spravna: "Vždy písemným rozkazem",
+        obrazek: null
+    },
+    // 148.
+    {
+        otazka: "148. O posunu bez posunové čety rozhoduje:",
+        moznosti: ["Strojvedoucí", "Vedoucí posunové čety nebo vedoucí obsluhy vlaku", "Výpravčí"],
+        spravna: "Strojvedoucí",
+        obrazek: null
+    },
+    // 149.
+    {
+        otazka: "149. Kolik vozidel normální stavby smí být sunuto při posunu bez posunové čety?",
+        moznosti: ["Jedno vozidlo, pokud strojvedoucí může přehlédnout kolej před sunutým vozidlem", "Žádné vozidlo", "Mohou být sunuta maximálně 3 vozidla, o jejich počtu rozhodne vždy strojvedoucí na základě přehlednosti posunové cesty a viditelnosti"],
+        spravna: "Žádné vozidlo",
+        obrazek: null
+    },
+    // 150.
+    {
+        otazka: "150. Jak dá signalista strojvedoucímu při posunu bez posunové čety návěst „Souhlas k jízdě“ pomocí radiostanice?",
+        moznosti: ["„Vlak 9876 ve stanici Dolní ze 6. koleje smerem ke stanici Karpaty posun dovolen“", "„Pro vlak 9876, tak fíro ze 6. koleje do Karpat můžem jezdit“", "„9876 do Karpat posun dovolen“"],
+        spravna: "„Vlak 9876 ve stanici Dolní ze 6. koleje smerem ke stanici Karpaty posun dovolen“",
+        obrazek: null
+    },
+    // 151.
+    {
+        otazka: "151. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Výhybka je uvolněna“ - dává na žádost výhybkáře strojvedoucí a upozorňuje na to, že všechna vozidla uvolnila příslušnou výhybku", "„Stůj“ – přikazuje strojvedoucímu neprodleně zastavit pohyb vozidel", "„Odbrzděte“ přikazuje strojvedoucímu odbrzdit soupravu"],
+        spravna: "„Výhybka je uvolněna“ - dává na žádost výhybkáře strojvedoucí a upozorňuje na to, že všechna vozidla uvolnila příslušnou výhybku",
+        obrazek: "obrazky2025/151.jpg"
+    },
+    // 152.
+    {
+        otazka: "152. Jaký je název této návěsti?",
+        moznosti: ["„Pochybná“", "„Posun dovolen“", "„Konec vlakové cesty“"],
+        spravna: "„Posun dovolen“",
+        obrazek: "obrazky2025/152.jpg"
+    },
+    // 153.
+    {
+        otazka: "153. Za provedení Ověření činnosti brzdy posunového dílu odpovídá?",
+        moznosti: ["Vždy zaměstnanec řídící posun", "Vedoucí posunové čety, při posunu bez posunové čety zaměstnanec řídící posun", "Vždy vedoucí posunové čety, při posunu bez posunové čety se Ověření činnosti posunového dílu neprovádí"],
+        spravna: "Vedoucí posunové čety, při posunu bez posunové čety zaměstnanec řídící posun",
+        obrazek: null
+    },
+    // 154.
+    {
+        otazka: "154. Jak zní slovní znění návěsti „Vzdálit“ dávané pomocí rádiové stanice?",
+        moznosti: ["„Lokomotiva od vlaku 888 v Božkově z koleje pět směrem k návěstidlu Se56 posunuj“", "„Lokomotiva od vlaku 888 v Božkově z koleje pět směrem k návěstidlu Se56 povytahuj“", "„Lokomotiva od vlaku 888 v Božkově z koleje pět směrem k návěstidlu Se56 posun dovolen“"],
+        spravna: "„Lokomotiva od vlaku 888 v Božkově z koleje pět směrem k návěstidlu Se56 posunuj“",
+        obrazek: null
+    },
+    // 155.
+    {
+        otazka: "155. Jak zní slovní znění návěsti „Přiblížit“ dávané pomocí rádiové stanice?",
+        moznosti: ["„Lokomotiva od vlaku 888 ve stanici Božkov z koleje pět směrem k návěstidlu Se56 posunuj“", "„Lokomotiva od vlaku 888 ve stanici Božkov z koleje pět směrem k návěstidlu Se56 suneme“", "„Lokomotiva od vlaku 888 ve stanici Božkov z koleje pět směremk návěstidlu Se56 posun dovolen“"],
+        spravna: "„Lokomotiva od vlaku 888 ve stanici Božkov z koleje pět směrem k návěstidlu Se56 posunuj“",
+        obrazek: null
+    },
+    // 156.
+    {
+        otazka: "156. Jak zní závazné slovní znění návěsti „Stlačit“ dávané pomocí rádiové stanice strojvedoucímu vlaku 9820?",
+        moznosti: ["„Vlak 9820 ve stanici Kladno na koleji tři stlač“", "„Vlak 9820 ve stanici Kladno na koleji tři můžeš najet na vozidla“", "„Vlak 9820 můžeš najet“"],
+        spravna: "„Vlak 9820 ve stanici Kladno na koleji tři stlač“",
+        obrazek: null
+    },
+    // 157.
+    {
+        otazka: "157. Jak zní závazné slovní znění návěsti „Stůj“ dávané pomocí rádiové stanice?",
+        moznosti: ["„Souprava od vlaku 976 v Lužánkách na koleji tři dobrá, dobrá“", "„Souprava od vlaku 976 v Lužánkách na koleji tři zastav“", "„Souprava od vlaku 976 v Lužánkách na koleji tři stůj, stůj“"],
+        spravna: "„Souprava od vlaku 976 v Lužánkách na koleji tři zastav“",
+        obrazek: null
+    },
+    // 158.
+    {
+        otazka: "158. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Vzdálit“ - přikazuje pohyb vozidel směrem od zaměstnance, který tuto návěst dává", "„Přiblížit“ – přikazuje pohyb vozidel směrem k zaměstnanci, který tuto návěst dává", "„Stlačit“ – přikazuje strojvedoucímu stlačit vozidla, aby mohla být svěšena nebo rozvěšena"],
+        spravna: "„Vzdálit“ - přikazuje pohyb vozidel směrem od zaměstnance, který tuto návěst dává",
+        obrazek: "obrazky2025/158.jpg"
+    },
+    // 159.
+    {
+        otazka: "159. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Vzdálit“ – přikazuje pohyb vozidel směrem od zaměstnance, který tuto návěst dává", "„Přiblížit“ – přikazuje pohyb vozidel směrem k zaměstnanci, který tuto návěst dává", "„Stlačit“ – přikazuje strojvedoucímu stlačit vozidla, aby mohla být svěšena nebo rozvěšena"],
+        spravna: "„Přiblížit“ – přikazuje pohyb vozidel směrem k zaměstnanci, který tuto návěst dává",
+        obrazek: "obrazky2025/159.jpg"
+    },
+    // 160.
+    {
+        otazka: "160. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Vzdálit“ – přikazuje pohyb vozidel směrem od zaměstnance, který tuto návěst dává", "„Přiblížit“ – přikazuje pohyb vozidel směrem k zaměstnanci, který tuto návěst dává", "„Stlačit“ - přikazuje strojvedoucímu stlačit vozidla, aby mohla být svěšena nebo rozvěšena"],
+        spravna: "„Stlačit“ - přikazuje strojvedoucímu stlačit vozidla, aby mohla být svěšena nebo rozvěšena",
+        obrazek: "obrazky2025/160.jpg"
+    },
+    // 161.
+    {
+        otazka: "161. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Popotáhnout“ - přikazuje strojvedoucímu kratší pohyb vozidel", "„Přiblížit“ – přikazuje pohyb vozidel směrem k zaměstnanci, který tuto návěst dává", "„Vzdálit“ – přikazuje pohyb vozidel směrem od zaměstnance, který tuto návěst dává"],
+        spravna: "„Popotáhnout“ - přikazuje strojvedoucímu kratší pohyb vozidel",
+        obrazek: "obrazky2025/161.jpg"
+    },
+    // 162.
+    {
+        otazka: "162. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Pomalu“ - přikazuje strojvedoucímu snížit rychlost vozidel na nejvýše 5 km/h a předvěstí ruční návěst pro posun Stůj", "„Přiblížit“ – přikazuje pohyb vozidel směrem k zaměstnanci, který tuto návěst dává", "„Stlačit“ – přikazuje strojvedoucímu stlačit vozidla, aby mohla být svěšena nebo rozvěšena"],
+        spravna: "„Pomalu“ - přikazuje strojvedoucímu snížit rychlost vozidel na nejvýše 5 km/h a předvěstí ruční návěst pro posun Stůj",
+        obrazek: "obrazky2025/162.jpg"
+    },
+    // 163.
+    {
+        otazka: "163. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Stůj“ – přikazuje strojvedoucímu neprodleně zastavit pohyb vozidel", "„Pomalu“ – přikazuje strojvedoucímu snížit rychlost vozidel na nejvýše 5 km/h a předvěstí ruční návěst pro posun „Stůj“", "„Stlačit“ – přikazuje strojvedoucímu stlačit vozidla, aby mohla být svěšena nebo rozvěšena"],
+        spravna: "„Stůj“ – přikazuje strojvedoucímu neprodleně zastavit pohyb vozidel",
+        obrazek: "obrazky2025/163.jpg"
+    },
+    // 164.
+    {
+        otazka: "164. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Souhlas k jízdě“ - dává výhybkář a informuje zaměstnance řídícího posun o postavené posunové cestě a dovoluje uvést posunový díl do pohybu", "„Stlačit“ – přikazuje strojvedoucímu stlačit vozidla, aby mohla být svěšena nebo rozvěšena", "„Brzda v pořádku“ – informuje o ukončení a výsledku zkoušky brzdy"],
+        spravna: "„Souhlas k jízdě“ - dává výhybkář a informuje zaměstnance řídícího posun o postavené posunové cestě a dovoluje uvést posunový díl do pohybu",
+        obrazek: "obrazky2025/164.jpg"
+    },
+    // 165.
+    {
+        otazka: "165. Za jízdy elektrického hnacího vozidla dojde k výpadku napětí v troleji a lokomotiva nesignalizuje závadu sběrače. Jak bude strojvedoucí dále postupovat?",
+        moznosti: ["Bude pokračovat v jízdě výběhem, po obnovení napětí v troleji bude pokračovat v jízdě bez dalších opatření", "Bude pokračovat v jízdě výběhem, po obnovení napětí v troleji zkontroluje pohledem stav sběrače a trolejového vedení, pokud je vše v pořádku, pokračuje v další jízdě", "Ihned zastaví vlak, po zastavení zkontroluje stav sběračů a trolejového vedení. Výpadek napětí a zastavení vlaku ohlásí výpravčímu"],
+        spravna: "Ihned zastaví vlak, po zastavení zkontroluje stav sběračů a trolejového vedení. Výpadek napětí a zastavení vlaku ohlásí výpravčímu",
+        obrazek: null
+    },
+    // 166.
+    {
+        otazka: "166. Při jízdě elektrického hnacího vozidla strojvedoucí zjistí rozkmitání troleje a výpadek napětí v troleji. Další postup strojvedoucího bude:",
+        moznosti: ["Stáhne sběrač a ihned zastaví vlak. Po zastavení zkontroluje pohledem stav sběračů, trolejového vedení a neprodleně zjištěnou závadu ohlásí výpravčímu", "Ihned pohledem z okna za jízdy zjistí stav zadního sběrače i trolejového vedení. Pokud je trolejové vedení v pořádku, je poškozen zadní sběrač pouze tak, že jeho stav umožňuje další bezpečnou jízdu, stáhne poškozený zadní svěrač a zdvihne přední sběrač. Dále pokračuje v jízdě bez omezení a tuto mimořádnost oznámí výpravčímu", "Zastaví ihned vlak, po zastavení zjistí stav sběračů a trolejového vedení, skutečný stav oznámí elektrodispečerovi a ihned pokračuje v další jízdě do nejbližší stanice"],
+        spravna: "Stáhne sběrač a ihned zastaví vlak. Po zastavení zkontroluje pohledem stav sběračů, trolejového vedení a neprodleně zjištěnou závadu ohlásí výpravčímu",
+        obrazek: null
+    },
+    // 167.
+    {
+        otazka: "167. Jak bude strojvedoucí postupovat při jízdě elektrického hnacího vozidla úsekem s napěťovou výlukou označeným dle obrázku? Strojvedoucí je zpraven o umístění výlukových návěstidel pro elektrický provoz.",
+        moznosti: ["Stáhne sběrač na návěst nepřenosného návěstidla s návěstí „Stáhněte sběrač“ (modrá deska) a zdvihne ho na návěst nepřenosného návěstidla s návěstí „Zdvihněte sběrač“ (modrá deska)", "Stáhne sběrač na návěst výlukového návěstidla s návěstí „Stáhněte sběrač“ (modrá deska s oranžovým orámováním) a zdvihne ho až na návěst výlukového návěstidla s návěstí „Zdvihněte sběrač“ (modrá deska s oranžovým orámováním)", "Jedná vždy jen podle kilometrické polohy napěťové výluky uvedené v písemném rozkaze"],
+        spravna: "Stáhne sběrač na návěst výlukového návěstidla s návěstí „Stáhněte sběrač“ (modrá deska s oranžovým orámováním) a zdvihne ho až na návěst výlukového návěstidla s návěstí „Zdvihněte sběrač“ (modrá deska s oranžovým orámováním)",
+        obrazek: "obrazky2025/167.jpg"
+    },
+    // 168.
+    {
+        otazka: "168. Jak se strojvedoucí dozví o umístění výlukových návěstidel pro elektrický provoz?",
+        moznosti: ["SPO", "od výpravčího", "písemným rozkazem"],
+        spravna: "SPO",
+        obrazek: null
+    },
+    // 169.
+    {
+        otazka: "169. Strojvedoucí vjíždí do stanice. V úrovni vjezdového návěstidla uvidí výlukové návěstidlo s návěstí „Stáhněte sběrač“. Na písemném rozkaze není v této stanici žádná výluka trakčního vedení uvedena. Jak bude strojvedoucí postupovat?",
+        moznosti: ["Pokud možno respektuje návěst „Stáhněte sběrač“", "Návěst „Stáhněte sběrač“ nerespektuje, vzhledem k tomu, že výluka TV není uvedena v písemném rozkaze", "V úrovni výlukového návěstidla s návěstí „Stáhněte sběrač“ zastaví a pomocí telekomunikačního zařízení zjistí u výpravčího její platnost"],
+        spravna: "Pokud možno respektuje návěst „Stáhněte sběrač“",
+        obrazek: "obrazky2025/169.jpg"
+    },
+    // 170.
+    {
+        otazka: "170. Strojvedoucí byl zpraven písemným rozkazem o mimořádné jízdě se staženými sběrači: „Ve Velimi při vjezdu projeďte beznapěťový úsek se staženými sběrači.“. Jak bude strojvedoucí postupovat při jízdě kolem výlukových návěstidel pro elektrický provoz?",
+        moznosti: ["Bude jednat podle návěsti výlukových návěstidel pro elektrický provoz a podle písemného rozkazu", "Návěsti přenosných návěstidle pro elektrický provoz neplatí. V případě zpravení písemným rozkazem strojvedoucí očekává umístění nepřenosných návěstidel pro el. provoz tj. návěstí pro elektrický provoz modré barvy", "Musí stáhnout sběrač, okamžitě zastavit, vzniklou situaci oznámit výpravčímu a postupovat podle jeho pokynů"],
+        spravna: "Bude jednat podle návěsti výlukových návěstidel pro elektrický provoz a podle písemného rozkazu",
+        obrazek: "obrazky2025/170.jpg"
+    },
+    // 171.
+    {
+        otazka: "171. Jak postupuje strojvedoucí u návěsti „Úsekový dělič“?",
+        moznosti: ["Stáhne sběrače", "Vypne jen centrální napájení vlaku a sběrače zůstávají zdvižené", "Pro strojvedoucího nejsou stanoveny při jízdě kolem návěsti „Úsekový dělič“ žádné postupy"],
+        spravna: "Stáhne sběrače",
+        obrazek: "obrazky2025/171.jpg"
+    },
+    // 172.
+    {
+        otazka: "172. Jakým způsobem pojede strojvedoucí v úseku od návěsti „Vypněte trakční odběr“?",
+        moznosti: ["Výběhem", "Vždy se staženými sběrači", "Bez omezení, návěst „Vypněte trakční odběr“ je platná pouze pro HV motorové trakce"],
+        spravna: "Výběhem",
+        obrazek: "obrazky2025/172.jpg"
+    },
+    // 173.
+    {
+        otazka: "173. Jak strojvedoucí postupuje za jízdy vlaku při zjištění poškození sběrače?",
+        moznosti: ["Ohlásí vznik mimořádné události a postupuje dle pokynů výpravčího a vyšetřujících orgánů", "Zdvihne ihned druhý sběrač a původně použitý sběrač ponechá do domovského depa ve stažené poloze. V depu nahlásí závadu strojmistrovi a zapíše ji do Knihy oprav HV", "Oznámí závadu výpravčímu, závadu zapíše do Knihy oprav HV a dohodne s výpravčím podmínky další jízdy"],
+        spravna: "Ohlásí vznik mimořádné události a postupuje dle pokynů výpravčího a vyšetřujících orgánů",
+        obrazek: null
+    },
+    // 174.
+    {
+        otazka: "174. Jak se provede kontrola sběrače a trolejového vedení po výpadku napětí u vlaku řízeného z řídícího vozu?",
+        moznosti: ["Pohledem ze stanoviště strojv. ŘV. Není-li sběrač ze stanoviště strojv. Vidět, sběrač se zdvihne a pokud není signalizována porucha sběrače a je obnoveno napětí v troleji, nepředpokládá se závada na svěrači i trolejovém vedení", "Vždy pohledem ze země cca 5 m od HV", "Dotazem u vlakvedoucího, který se nachází blíže HV a který provede kontrolu pohledem za strojvedoucího"],
+        spravna: "Pohledem ze stanoviště strojv. ŘV. Není-li sběrač ze stanoviště strojv. Vidět, sběrač se zdvihne a pokud není signalizována porucha sběrače a je obnoveno napětí v troleji, nepředpokládá se závada na svěrači i trolejovém vedení",
+        obrazek: null
+    },
+    // 175.
+    {
+        otazka: "175. Vykonává se součinnost přídavné a průběžné brzdy na stanovišti řídícího vozu v soupravě vlaku?",
+        moznosti: ["Ano, vykonává se (pokud je vybaven dvojitou zpětnou záklopkou)", "Ne, nevykonává se", "Ano, vykonává se pouze po provozním ošetření"],
+        spravna: "Ano, vykonává se (pokud je vybaven dvojitou zpětnou záklopkou)",
+        obrazek: null
+    },
+    // 176.
+    {
+        otazka: "176. Kdy provádí strojvedoucí funkční zkoušku zařízení SRD (vozidlové radiostanice)?",
+        moznosti: ["Strojvedoucí tuto zkoušku neprovádí, provádí ji udržující zaměstnanec oprav v rámci periodických oprav", "Vždy po zapnutí vozidlové radiostanice", "Nejméně jednou za 24 h, zpravidla při výjezdu z depa"],
+        spravna: "Vždy po zapnutí vozidlové radiostanice",
+        obrazek: null
+    },
+    // 177.
+    {
+        otazka: "177. Při odstavení osobních vozů a zajištění proti ujetí započítáváme brzdící váhu podle kterého údaje na voze?",
+        moznosti: ["a)", "b)", "c)"],
+        spravna: "c)",
+        obrazek: "obrazky2025/177.jpg"
+    },
+    // 178.
+    {
+        otazka: "178. Brzdící váha vlaku je 100 tun při jeho hmotnosti 200 tun. Korekční součinitel kappa je roven 1. Jaké je skutečné brzdící procento vlaku?",
+        moznosti: ["50%", "100%", "200%"],
+        spravna: "50%",
+        obrazek: null
+    },
+    // 179.
+    {
+        otazka: "179. Do jaké polohy se přestaví přestavovače brzdy na vlacích osobní dopravy?",
+        moznosti: ["Do polohy s nejvyšším účinkem", "Polohu stanoví TJŘ daného vlaku", "Polohu stanoví zaměstnanec zodpovědný za sestavu vlaku"],
+        spravna: "Do polohy s nejvyšším účinkem",
+        obrazek: null
+    },
+    // 180.
+    {
+        otazka: "180. Zkoušku spojení v SRD provádí strojvedoucí hnacího vozidla kódovaným hlášením:",
+        moznosti: ["„D“", "„A“", "„D-A“"],
+        spravna: "„D“",
+        obrazek: null
+    },
+    // 181.
+    {
+        otazka: "Co je simplexní kanál?",
+        moznosti: ["Kanál, ve kterém lze zprávy jen přijímat nebo jen vysílat", "Kanál, který slouží pro kontrolu sítě", "Kanál, ve kterém lze zprávy vysílat i přijímat současně"],
+        spravna: "Kanál, ve kterém lze zprávy jen přijímat nebo jen vysílat",
+        obrazek: null
+
+    },
+    // 182.
+    {
+        otazka: "182. Pokud byl vlak zastaven dálkově radiovým zařízením SRD, jaký symbol rutinního příkazu svítí na displeji radiostanice?",
+        moznosti: ["„STOP“", "„ZASTAVIT“", "„V“"],
+        spravna: "„STOP“",
+        obrazek: null
+
+    },
+    // 183.
+    {
+        otazka: "183. Volací číslo vozidlové radiové stanice v SRD vedoucího hnacího vozidla vlaku 951 je:",
+        moznosti: ["000951", "100951", "095100"],
+        spravna: "000951",
+        obrazek: null
+
+    },
+    // 184.
+    {
+        otazka: "184. Jaké údaje musí vždy strojvedoucí zadat do elektronického rychloměru u vozidla bez ETCS?",
+        moznosti: ["Kód dopravce, číslo strojvedoucího, číslo vlaku", "Číslo vlaku, číslo stanice, hmotnost, počet náprav, režim brzdění, skutečná brzdící procenta", "Číslo vlaku, skutečná a předepsaná brzdící procenta"],
+        spravna: "Kód dopravce, číslo strojvedoucího, číslo vlaku",
+        obrazek: null
+
+    },
+    // 185.
+    {
+        otazka: "185. Jak bude postupovat strojvedoucí, zjistil-li při nástupu na vozidlo v domovském depu vozidla, že na rychloměru svítí červeně signalizace „Porucha“ a závadu se posléze nepodaří odstranit?",
+        moznosti: ["Nesmí převzít vozidlo na výkon, při němž by mělo být samostatně řízeno", "Smí převzít vozidlo pouze za předpokladu, že bude po celou dobu výkonu používáno pouze při posunu", "Zavolá strojmistrovi a ten rozhodne o případném nasazení vozidla na výkon, při němž by mělo být samostatně řízeno"],
+        spravna: "Nesmí převzít vozidlo na výkon, při němž by mělo být samostatně řízeno",
+        obrazek: "obrazky2025/185.jpg"
+
+    },
+    // 186.
+    {
+        otazka: "186. V jakém případě neprověřuje vlakový zabezpečovač periodicky bdělost strojvedoucího při jízdě na tratích nevybavených ETCS před návěstí hl. návěstidla v poloze „Volno“?",
+        moznosti: ["Při jízdě na kódovaných tratích s funkčním návěstním opakovačem", "Při jízdě na kódovaných tratích při poruše jen návěstního opakovače", "Při jízdě na nekódovaných tratích"],
+        spravna: "Při jízdě na kódovaných tratích s funkčním návěstním opakovačem",
+        obrazek: null
+
+    },
+    // 187.
+    {
+        otazka: "187. Součásti pro bezpečnostní brzdu (elektromagnetický ventil nebo jeho kryt, tlakový spínač a uzavírací kohout) jsou označeny barvou:",
+        moznosti: ["Žlutou", "Červenou", "Šedou"],
+        spravna: "Žlutou",
+        obrazek: null
+
+    },
+    // 188.
+    {
+        otazka: "188. Za jízdy vlaku dojde bez zjevné příčiny k úplnému vypuštění vzduchu z hlavního potrubí. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Přestaví brzdič (ovladač brzdiče) do polohy „Závěr“ (uzavře vstup vzduchu do hlavního potrubí) a vyčká zastavení vlaku", "Přestaví brzdič (ovladač brzdiče) do polohy, v níž dojde k doplnění tlaku v hlavním potrubí a pokračuje v jízdě rychlostí o 10 km/h nižší než je nejvyšší dovolená rychlost vlaku v pojížděném úseku", "Neprodleně zavede rychločinné brzdění"],
+        spravna: "Přestaví brzdič (ovladač brzdiče) do polohy „Závěr“ (uzavře vstup vzduchu do hlavního potrubí) a vyčká zastavení vlaku",
+        obrazek: null
+
+    },
+    // 189.
+    {
+        otazka: "189. Jak lze odstranit nebo snížit skluz hnacích náprav kolejového vozidla?",
+        moznosti: ["Zvýšením tažné síly na obvodu kol a pískováním", "Zmenšením tažné síly na obvodu kol a pískováním", "Zvýšením otáček a tažné síly na obvodu kol"],
+        spravna: "Zmenšením tažné síly na obvodu kol a pískováním",
+        obrazek: null
+
+    },
+    // 190.
+    {
+        otazka: "190. Pod pojmem „inversní ventil“ se rozumí?",
+        moznosti: ["Pneumatický ventil, uváděný do činnosti rozdílem tlaku vzduchu pod/nad membránou", "Elektropneumatický ventil, který se uvede do činnosti přivedením napětí na cívku ventilu", "Elektropneumatický ventil, který se uvede do činnosti při ztrátě napětí na cívce ventilu"],
+        spravna: "Elektropneumatický ventil, který se uvede do činnosti při ztrátě napětí na cívce ventilu",
+        obrazek: null
+
+    },
+    // 191.
+    {
+        otazka: "191. Rukojeť spojkového kohoutu hlavního brzdového potrubí je natřena barvou?",
+        moznosti: ["Červenou", "Žlutou", "Modrou"],
+        spravna: "Červenou",
+        obrazek: null
+    },
+    ];
+
+
+    // Globální proměnné
+    let otazky = [];
+    let aktualniOtazkaIndex = 0;
+    let skore = 0;
+    let odpovedZvolena = false;
+    let celkovyPocetOtazek = 0;
+
+    // --- NOVÉ STATISTIKY ---
+    let totalSpravne = 0; // Celkový počet správných odpovědí
+    let totalSpatne = 0;  // Celkový počet špatných odpovědí
+    // -----------------------
+
+    // --- PERZISTENTNÍ PROMĚNNÉ ---
+    let celyBalicekOtazekID = []; // ID (Indexy 0-354) otázek v náhodném pořadí
+    let indexDalsiOtazky = 0;    // Pozice, odkud se má brát v celyBalicekOtazekID
+    const MAX_POCET_OTAZEK = originalniOtazky.length; // 191
+
+    // --- NOVÁ PROMĚNNÁ PRO RECYKLACI OTÁZEK ---
+    // Skladuje indexy (0-354) otázek, které v rámci aktuálního kvízu nebyly zodpovězeny správně.
+    let nespravneOdpovezeneOriginalniIndexy = [];
+    // ------------------------------------------
+
+    const startScreen = document.getElementById('start-screen');
+    const kvizElementy = document.getElementById('kviz-elementy');
+    const pocetOtazekInput = document.getElementById('pocetOtazek');
+    const startTlacitko = document.getElementById('start-tlacitko');
+    const otazkaText = document.getElementById('otazka-text');
+    const otazkaObrazek = document.getElementById('otazka-obrazek');
+    const obrazkyViceKontejner = document.getElementById('obrazky-vice-kontejner');
+    const moznostiKontejner = document.getElementById('moznosti-kontejner');
+    const dalsiTlacitko = document.getElementById('dalsi-tlacitko');
+    const vysledekDiv = document.getElementById('vysledek');
+    const pocitadloOtazek = document.getElementById('pocitadlo-otazek');
+    const zbyleOtazkyElement = document.getElementById('zbyle-otazky');
+
+    // *** DOPLNĚNÍ CHYBĚJÍCÍ DEFINICE ***
+    const statistikyUspesnostiDiv = document.getElementById('statistiky-uspesnosti');
+
+    // --- NOVÝ ELEMENT TLAČÍTKA RESET ---
+    const resetStatistikyTlacitko = document.getElementById('reset-statistiky-tlacitko');
+    // ------------------------------------
+
+
+// ----------------------------------------------------
+// PERZISTENTNÍ LOGIKA (ULOŽENÍ STAVU DO LOCALSTORAGE)
+// ----------------------------------------------------
+
+function ulozitStav() {
+    localStorage.setItem('celyBalicekOtazekID', JSON.stringify(celyBalicekOtazekID));
+    localStorage.setItem('indexDalsiOtazky', indexDalsiOtazky);
+    // NOVÉ: Ukládání statistik
+    localStorage.setItem('totalSpravne', totalSpravne);
+    localStorage.setItem('totalSpatne', totalSpatne);
+}
+
+function zamichatPole(pole) {
+    for (let i = pole.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pole[i], pole[j]] = [pole[j], pole[i]];
+    }
+}
+
+function inicializovatNovyBalicek() {
+    // 1. Vytvoří seznam ID (indexů od 0 do MAX_POCET_OTAZEK - 1)
+    celyBalicekOtazekID = Array.from({ length: MAX_POCET_OTAZEK }, (_, i) => i);
+    // 2. Zamíchá ID
+    zamichatPole(celyBalicekOtazekID);
+    // 3. Vynuluje index
+    indexDalsiOtazky = 0;
+    // 4. Uloží stav
+    ulozitStav();
+}
+
+function nacistNeboInicializovatBalicek() {
+    const ulozenyBalicek = localStorage.getItem('celyBalicekOtazekID');
+    const ulozenyIndex = localStorage.getItem('indexDalsiOtazky');
+    // NOVÉ: Načítání statistik
+    const ulozenyTotalSpravne = localStorage.getItem('totalSpravne');
+    const ulozenyTotalSpatne = localStorage.getItem('totalSpatne');
+
+    let dataJsouValidni = false;
+
+    // --- OPRAVA CHYBY: KONTROLA VALIDITY DAT ---
+    // Pokud máme uložená data, musíme ověřit, zda indexy v nich neukazují na neexistující otázky.
+    // To se stane, když se zkrátí seznam otázek v kódu, ale v LocalStorage zůstanou staré indexy.
+    if (ulozenyBalicek && ulozenyIndex !== null) {
+        try {
+            const parsovanyBalicek = JSON.parse(ulozenyBalicek);
+            if (parsovanyBalicek.length > 0) {
+                // Zkontrolujeme, zda nejvyšší uložený index existuje v aktuálním poli otázek
+                const maximalniIndex = Math.max(...parsovanyBalicek);
+                if (maximalniIndex < originalniOtazky.length) {
+                    dataJsouValidni = true;
+                    celyBalicekOtazekID = parsovanyBalicek;
+                    indexDalsiOtazky = parseInt(ulozenyIndex);
+                } else {
+                    console.warn("Zjištěna nekompatibilita dat (staré indexy). Provádím reset.");
+                }
+            }
+        } catch (e) {
+            console.error("Chyba při načítání dat:", e);
+        }
+    }
+
+    // Pokud data nejsou validní nebo neexistují, inicializujeme nový balíček
+    if (!dataJsouValidni) {
+        inicializovatNovyBalicek();
+    }
+    // -------------------------------------------
+
+    // NOVÉ: Načtení a inicializace statistik
+    totalSpravne = ulozenyTotalSpravne ? parseInt(ulozenyTotalSpravne) : 0;
+    totalSpatne = ulozenyTotalSpatne ? parseInt(ulozenyTotalSpatne) : 0;
+
+    // Aktualizace zbývajících otázek a zobrazení statistik
+    if (zbyleOtazkyElement && statistikyUspesnostiDiv) {
+        const zbyva = celyBalicekOtazekID.length;
+        zbyleOtazkyElement.textContent = `Zbývá dokončit: ${zbyva} unikátních otázek z celkového cyklu ${MAX_POCET_OTAZEK}.`;
+
+        // Zobrazení průměrné úspěšnosti
+        const celkemOdpovezeno = totalSpravne + totalSpatne;
+        const uspesnost = celkemOdpovezeno > 0 ? ((totalSpravne / celkemOdpovezeno) * 100).toFixed(1) : '0.0';
+
+        // NOVÉ zobrazení statistik
+        statistikyUspesnostiDiv.innerHTML = `
+        <hr style="border-top: 1px solid #ddd; margin: 0 0 15px 0;">
+        <h3>Celkové statistiky:</h3>
+        <p>Správně: <strong>${totalSpravne}</strong> / Špatně: <strong>${totalSpatne}</strong></p>
+        <p id="uspesnost-text" style="font-size: 1.2em; font-weight: bold; margin-bottom: 5px;">Úspěšnost (odpovězeno): ${uspesnost}%</p>
+   `;
+    }
+}
+
+// FUNKCE UPRAVENA: Přidána ochrana proti pádu (filter)
+function vybratOtazkyZBalicku(pocet) {
+    const vybraneIndexy = celyBalicekOtazekID.slice(indexDalsiOtazky, indexDalsiOtazky + pocet);
+
+    // Mapujeme indexy zpět na objekty otázek
+    // PŘIDÁNO .filter: Pokud by se i přesto objevil neplatný index, vyfiltrujeme ho, aby aplikace nespadla
+    const vybraneOtazky = vybraneIndexy
+        .map(originalIndex => {
+            if (!originalniOtazky[originalIndex]) return null; // Ochrana
+            return {
+                ...originalniOtazky[originalIndex],
+                originalniIndex: originalIndex
+            };
+        })
+        .filter(otazka => otazka !== null); // Odstraní prázdné/chybné otázky
+
+    return vybraneOtazky;
+}
+
+// Volání při načtení stránky (inicializace)
+nacistNeboInicializovatBalicek();
+
+// --- PŘIPOJENÍ ZÁKLADNÍCH LISTENERŮ ---
+startTlacitko.addEventListener('click', spustitKviz);
+dalsiTlacitko.addEventListener('click', dalsiOtazka);
+
+// NOVÝ LISTENER PRO RESET: POUŽÍVÁME KONTROLU
+if (resetStatistikyTlacitko) {
+    resetStatistikyTlacitko.addEventListener('click', resetStatistiky);
+}
+
+// LISTENER PRO ENTER KLÁVESU NA INPUTU
+pocetOtazekInput.addEventListener('keydown', function(event) {
+    if (event.keyCode === 13) { 
+        event.preventDefault(); 
+        startTlacitko.click(); 
+    }
+});
+
+// ------------------------------------------------------------------
+// *** KLÍČOVÝ KÓD PRO ZAJIŠTĚNÍ FUNKČNOSTI VE WEBVIEW ***
+// Spustí se se zpožděním, aby se DOM plně vykreslil a klávesnice se aktivovala.
+// ------------------------------------------------------------------
+setTimeout(() => {
+    // 1. Znovu se pokusíme připojit listener pro reset, pro případ, že selhal timing
+    if (resetStatistikyTlacitko) {
+        // Odebereme pro jistotu staré listenery a přidáme nový
+        resetStatistikyTlacitko.removeEventListener('click', resetStatistiky); 
+        resetStatistikyTlacitko.addEventListener('click', resetStatistiky);
+    }
+    
+    // 2. Manuální focus (pro mobilní klávesnici)
+    if (startScreen.style.display !== 'none' && pocetOtazekInput) {
+        pocetOtazekInput.focus();
+    }
+    
+}, 500); // 500 ms zpoždění dává WebView dost času
+
+
+    function spustitKviz() {
+        const pocet = parseInt(pocetOtazekInput.value);
+
+        // Zvolený počet nesmí překročit zbývající otázky v balíčku
+        const zbyvaOtazekVBalicku = celyBalicekOtazekID.length;
+
+        if (pocet > 0 && pocet <= MAX_POCET_OTAZEK) {
+
+            // Kontrola konce celého cyklu
+            if (zbyvaOtazekVBalicku === 0) {
+                 alert(`Celý cyklus ${MAX_POCET_OTAZEK} otázek je dokončen! Bude spuštěn nový cyklus.`);
+                 inicializovatNovyBalicek();
+                 nacistNeboInicializovatBalicek(); // Aktualizuj zobrazení
+                 return;
+            }
+
+            // Testujeme jen tolik, kolik zbylo
+            const pocetKvizu = Math.min(pocet, zbyvaOtazekVBalicku);
+
+            celkovyPocetOtazek = pocetKvizu;
+
+            // PŘIDÁNO: Vynulovat seznam špatných odpovědí pro nový běh
+            nespravneOdpovezeneOriginalniIndexy = [];
+
+            // Použití nové funkce pro výběr otázek z perzistentního balíčku
+            otazky = vybratOtazkyZBalicku(pocetKvizu);
+
+            aktualniOtazkaIndex = 0;
+            skore = 0;
+
+            startScreen.style.display = 'none';
+            vysledekDiv.style.display = 'none';
+            kvizElementy.style.display = 'block';
+
+            zobrazOtazku();
+
+        } else {
+            alert(`Zvolte platný počet otázek (1 až ${MAX_POCET_OTAZEK}).`);
+        }
+    }
+
+    function zobrazOtazku() {
+    if (aktualniOtazkaIndex >= celkovyPocetOtazek) {
+        zobrazVysledek();
+        return;
+    }
+
+    const otazkaData = otazky[aktualniOtazkaIndex];
+    odpovedZvolena = false;
+    dalsiTlacitko.disabled = true;
+
+    // Aktualizace počítadla otázek (např. 1/10)
+    pocitadloOtazek.textContent = `${aktualniOtazkaIndex + 1}/${celkovyPocetOtazek}`;
+
+    // Zobrazí celý text otázky VČETNĚ ČÍSLA z databáze
+    otazkaText.textContent = otazkaData.otazka;
+
+    // --- ZBYTEK LOGIKY PRO OBRÁZKY (ZŮSTÁVÁ STEJNÝ) ---
+    otazkaObrazek.style.display = 'none';
+    otazkaObrazek.src = '';
+    obrazkyViceKontejner.innerHTML = '';
+    obrazkyViceKontejner.style.display = 'none';
+
+    if (otazkaData.viceObrazku && otazkaData.viceObrazku.length > 0) {
+        obrazkyViceKontejner.style.display = 'flex';
+
+        otazkaData.viceObrazku.forEach(obrazekInfo => {
+            const div = document.createElement('div');
+            div.classList.add('obrazek-moznost');
+            div.innerHTML = `
+                <img src="${obrazekInfo.soubor}" alt="Možnost ${obrazekInfo.popis}">
+                <p style="margin-top: 5px;">${obrazekInfo.popis}</p>
+            `;
+            obrazkyViceKontejner.appendChild(div);
+        });
+
+    // Nový kód, který zajišťuje míchání možností
+    } else if (otazkaData.obrazek) {
+        otazkaObrazek.src = otazkaData.obrazek;
+        otazkaObrazek.style.display = 'block';
+    }
+    // --- KONEC LOGIKY PRO OBRÁZKY ---
+
+    // **NOVÁ LOGIKA PRO MÍCHÁNÍ ODPOVĚDÍ**
+    // 1. Vytvoříme KOPii pole možností odpovědí, abychom neovlivnili původní data
+    const zamichaneMoznosti = [...otazkaData.moznosti];
+    // 2. Zamícháme kopii pomocí již existující funkce zamichatPole
+    zamichatPole(zamichaneMoznosti);
+    // **KONEC NOVÉ LOGIKY**
+
+
+    moznostiKontejner.innerHTML = '';
+    // Vykreslujeme ZAMÍCHANÉ možnosti (používáme zamichaneMoznosti)
+    zamichaneMoznosti.forEach(moznost => {
+        const tlacitko = document.createElement('button');
+        tlacitko.textContent = moznost;
+        tlacitko.addEventListener('click', () => zkontrolovatOdpoved(moznost, tlacitko, otazkaData.spravna));
+        moznostiKontejner.appendChild(tlacitko);
+    });
+}
+
+// FUNKCE UPRAVENA: Sleduje špatné odpovědi
+function zkontrolovatOdpoved(zvolenaOdpoved, tlacitko, spravnaOdpoved) {
+    if (odpovedZvolena) return;
+    odpovedZvolena = true;
+    dalsiTlacitko.disabled = false;
+
+    const vsechnaTlacitka = moznostiKontejner.querySelectorAll('button');
+    vsechnaTlacitka.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === spravnaOdpoved) {
+            btn.classList.add('spravne');
+        } else if (btn.textContent === zvolenaOdpoved) {
+            btn.classList.add('spatne');
+        }
+    });
+
+    // ... (uvnitř funkce zkontrolovatOdpoved)
+
+    if (zvolenaOdpoved === spravnaOdpoved) {
+        skore++;
+        // NOVÉ: Inkrementace celkových správných odpovědí
+        totalSpravne++;
+    } else {
+        // NOVÉ: Inkrementace celkových špatných odpovědí
+        totalSpatne++;
+
+        // PŮVODNÍ KÓD: Uložení indexu špatné otázky k recyklaci
+        const otazkaData = otazky[aktualniOtazkaIndex];
+        // Uloží se index 0-354, ne index v rámci aktuálního malého testu
+        nespravneOdpovezeneOriginalniIndexy.push(otazkaData.originalniIndex);
+    }
+}
+
+    function dalsiOtazka() {
+        aktualniOtazkaIndex++;
+        zobrazOtazku();
+    }
+
+// FUNKCE UPRAVENA: Rekonstruuje balíček, aby se špatné otázky opakovaly
+// ... (začátek funkce zobrazVysledek() beze změny)
+
+function zobrazVysledek() {
+
+    // **NOVÁ LOGIKA PRO UKLÁDÁNÍ STAVU A RECYKLACI OTÁZEK:**
+
+    // 1. Otázky z aktuálního běhu, které nebyly správně (ty, které se vrací do balíčku)
+    const otazkyKRecyklaci = nespravneOdpovezeneOriginalniIndexy;
+
+    // 2. Nový začátek zbytku balíčku (za rozsahem aktuálně testovaných otázek)
+    const novyIndexDalsiOtazky = indexDalsiOtazky + celkovyPocetOtazek;
+
+    // 3. Zbytek neotestovaného balíčku (původně za aktuálním testem)
+    const zbytekBalicku = celyBalicekOtazekID.slice(novyIndexDalsiOtazky);
+
+    // 4. Vytvoříme NOVÝ celyBalicekOtazekID (Recyklované otázky jdou na začátek, ale budeme míchat)
+    let novyCelyBalicek = [...otazkyKRecyklaci];
+    novyCelyBalicek.push(...zbytekBalicku);
+
+    // **ZDE JE ZMĚNA: Zamíchání celého nového balíčku**
+    zamichatPole(novyCelyBalicek); // Zamíchá recyklované otázky do zbytku balíčku
+    // **KONEC ZMĚNY**
+
+    // 5. Aktualizace perzistence
+    celyBalicekOtazekID = novyCelyBalicek;
+    // indexDalsiOtazky se vrací na 0, protože se testuje z nového, zkráceného balíčku
+    indexDalsiOtazky = 0;
+
+    ulozitStav();
+
+// ... (zbytek funkce zobrazVysledek() beze změny)
+
+    // 6. Kontrola konce celého cyklu
+    if (celyBalicekOtazekID.length === 0) {
+        inicializovatNovyBalicek();
+        setTimeout(() => alert(`Gratulace! Všechny otázky byly dokončeny SPRÁVNĚ. Kvíz začíná novým, náhodně zamíchaným cyklem ${MAX_POCET_OTAZEK} otázek.`), 100);
+    }
+
+    // Zbytek logiky zobrazení výsledků (beze změny)
+    kvizElementy.style.display = 'none';
+    vysledekDiv.style.display = 'block';
+
+    const uspesnostProcenta = celkovyPocetOtazek > 0
+        ? (skore / celkovyPocetOtazek) * 100
+        : 0;
+
+    let nadpisEmotikon;
+    let hlaska;
+    let barvaHlasky;
+    let h1Element = document.querySelector('h1');
+
+    h1Element.classList.remove('vysledek-uspech', 'vysledek-neuspech');
+
+    if (uspesnostProcenta >= 80) {
+        nadpisEmotikon = '🎉';
+        hlaska = "Jsi za vodou! 👍";
+        barvaHlasky = '#28a745';
+        h1Element.classList.add('vysledek-uspech');
+    } else {
+        nadpisEmotikon = '👎';
+        hlaska = "Jsi V P***li 😤";
+        barvaHlasky = '#dc3545';
+        h1Element.classList.add('vysledek-neuspech');
+    }
+
+    vysledekDiv.innerHTML = `
+        <h2>Kvíz dokončen! ${nadpisEmotikon}</h2>
+        <p>Vaše skóre je: ${skore} / ${celkovyPocetOtazek}</p>
+        <p style="font-size: 1.2em; font-weight: bold;">Úspěšnost: ${uspesnostProcenta.toFixed(1)}%</p>
+        <h3 style="color: ${barvaHlasky}; margin: 20px 0;">${hlaska}</h3>
+        <button id="restart-tlacitko" style="margin-top: 20px;">Restartovat kvíz</button>
+    `;
+    document.getElementById('restart-tlacitko').addEventListener('click', restartKvizu);
+}
+    // --- NOVÁ FUNKCE PRO RESET STATISTIK BEZ DIALOGU ---
+function resetStatistiky() {
+    // Odstraněno "const potvrzeni = confirm(...);"
+    
+    // Nastavíme upozornění, že se akce provádí
+    alert("Celkové statistiky se resetují. Klikněte OK.");
+    
+    // Tento blok se nyní provede okamžitě
+    totalSpravne = 0;
+    totalSpatne = 0;
+    localStorage.removeItem('totalSpravne');
+    localStorage.removeItem('totalSpatne');
+
+    // Znovu načíst a zobrazit aktualizované statistiky
+    nacistNeboInicializovatBalicek();
+
+    // Dříve bylo uvnitř if, nyní je vždy
+    alert("Statistiky úspěšnosti byly vynulovány. Můžete začít s čistým štítem! 👍");
+}
+// ----------------------------------------------------
+
+    // FUNKCE UPRAVENA: Aktualizuje perzistentní stav
+    function restartKvizu() {
+    // 1. Vynulování zadané hodnoty
+    pocetOtazekInput.value = ''; 
+
+    // 2. Přesun na startovací obrazovku
+    vysledekDiv.style.display = 'none';
+    startScreen.style.display = 'block';
+
+    // 3. Znovu načtení stavu pro aktualizaci zobrazení zbývajících otázek
+    nacistNeboInicializovatBalicek(); 
+
+    // 4. (Volitelné) Zajistí okamžité zaostření
+    pocetOtazekInput.focus(); 
+}
+</script>
+
+</body>
+</html>
