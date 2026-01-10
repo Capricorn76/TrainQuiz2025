@@ -350,8 +350,8 @@
     <div id="start-screen">
                 <h2>Nastavení kvízu</h2>
                 <p id="zbyle-otazky"></p>
-                <label for="pocetOtazek">Vyberte počet otázek (Max: 191):</label>
-                <input type="number" id="pocetOtazek" min="1" max="191" autofocus>
+                <label for="pocetOtazek">Vyberte počet otázek (Max: 275):</label>
+                <input type="number" id="pocetOtazek" min="1" max="275" autofocus>
 
                         <div id="statistiky-uspesnosti" style="margin-top: 20px;">
                             </div>
@@ -1779,6 +1779,594 @@ const originalniOtazky = [
         spravna: "Červenou",
         obrazek: null
     },
+    // 192.
+    {
+        otazka: "192. Jaký bude postup doprovodu vlaku v čase odjezdu po výpravě vlaku výpravčím? Souprava vlaku mácentrální ovládání dveří strojvedoucími, ale jen zadní motorový vůz je obsazen vlakovou četou:",
+        moznosti: ["Vlaková četa dá návěst „Výzva k pohotovosti“ → strojvedoucí B uzavře dveře a dá návěst „Souhlas k odjezdu“ → strojvedoucí A převezme návěst „Souhlas k odjezdu“ a poté uzavře dveře", "Strojvedoucí A dá návěst „Výzva k pohotovosti“ („Výzva strojvedoucího“) → vlaková četa dá návěst „Pohotovi k odjezdu“ strojvedoucímu B → strojvedoucí B uzavře dveře a dá návěst „Souhlas k odjezdu“ → strojvedoucí A převezme návěst „Souhlas k odjezdu“ a poté uzavře dveře", "Strojvedoucí A dá návěst „Výzva k pohotovosti“ („Výzva strojvedoucího“) → vlaková četa dá návěst „Souhlas k odjezdu“ ke strojvedoucímu A → strojvedoucí B uzavře dveře a dá návěst „Souhlas k odjezdu“ ke strojvedoucímu A → strojvedoucí A převezme návěst „Souhlas k odjezdu“ a poté uzavře dveře"],
+        spravna: "Strojvedoucí A dá návěst „Výzva k pohotovosti“ („Výzva strojvedoucího“) → vlaková četa dá návěst „Pohotovi k odjezdu“ strojvedoucímu B → strojvedoucí B uzavře dveře a dá návěst „Souhlas k odjezdu“ → strojvedoucí A převezme návěst „Souhlas k odjezdu“ a poté uzavře dveře",
+        obrazek: "obrazky2025/192.jpg"
+    },
+    // 193.
+    {
+        otazka: "193. Jakým způsobem oznámí strojvedoucí zadní jednotky strojvedoucímu předního HV ř. 714 připravenost k odjezdu?",
+        moznosti: ["Návěstí „Souhlas k odjezdu“", "Pomocí vozidlové radiostanice: „Dveře mám zavřené“", "Pomocí mobilního telefonu"],
+        spravna: "Návěstí „Souhlas k odjezdu“",
+        obrazek: "obrazky2025/193.jpg"
+    },
+    // 194.
+    {
+        otazka: "194. Strojvedoucí vlaku s přepravou cestujících jedoucím v systému TB 5 obdržel návěst „Souhlas k odjezdu“. Dveře, ze kterých vlaková četa dává návěst zůstávají stále otevřené. Strojvedoucí se s vlakem rozjet:",
+        moznosti: ["Nesmí, musí vyčkat uzavření dveří", "Může, vlaková četa do doby rozjezdu vlaku kontroluje situaci na nástupišti", "Může pouze po předchozí domluvě s vlakovou četou o zanechání otevřených dveří do doby rozjezdu"],
+        spravna: "Může, vlaková četa do doby rozjezdu vlaku kontroluje situaci na nástupišti",
+        obrazek: null
+    },
+    // 195.
+    {
+        otazka: "195. Strojvedoucí v čase pravidelného odjezdu po provedené výpravě vlaku dá vlakové četě návěst „Výzva strojvedoucího“ přes zpětné zrcátko. Vlaková četa nereaguje. Strojvedoucí dále postupuje takto:",
+        moznosti: ["Uvědomí si, že postupoval v rozporu s předpisem", "Vytkne vlakové četě neznalost předpisu", "Upoutá pozornost vlakové čety použitím lokomotivní houkačky např. návěstí „Pozor“"],
+        spravna: "Uvědomí si, že postupoval v rozporu s předpisem",
+        obrazek: null
+    },
+    // 196.
+    {
+        otazka: "196. Vlak vedený HV ř. 841 zastavil pro výstup a nástup cestujících ve 22:42 hod. ve stanici s výlukou dopravní služby výpravčího. V čase pravidelného odjezdu postupuje strojvedoucí takto:",
+        moznosti: ["Nemusí dát návěst „Výzva strojvedoucího“ nebo „Výzva k pohotovosti“", "Musí dát vždy návěst „Výzva k pohotovosti“ lokomotivní houkačkou", "Musí dát přednostně návěst „Výzva strojvedoucího“, případně dá návěst „Výzva k pohotovosti“ píšťalkou"],
+        spravna: "Musí dát přednostně návěst „Výzva strojvedoucího“, případně dá návěst „Výzva k pohotovosti“ píšťalkou",
+        obrazek: null
+    },
+    // 197.
+    {
+        otazka: "197. Strojvedoucí měl klíče od odstaveného HV nepřetržitě u sebe. Kdy se ZBHV nemusí vykonat?",
+        moznosti: ["Pokud doba odstavení nepřesáhne 12 hodin", "Pokud bylo HV odstaveno v depu", "Pokud doba odstavení nepřesáhne 24 hodin"],
+        spravna: "Pokud doba odstavení nepřesáhne 12 hodin",
+        obrazek: null
+    },
+    // 198.
+    {
+        otazka: "198. Vykonává se pravidelně zkouška těsnosti na soupravách vlaků osobní dopravy?",
+        moznosti: ["Ano", "Ne", "Vykonává se vždy jen u nově sestaveného vlaku"],
+        spravna: "Ne",
+        obrazek: null
+    },
+    // 199.
+    {
+        otazka: "199. Dle jakého dokumentu se provádí u jednotek ZBHV?",
+        moznosti: ["V 15", "D2", "D1"],
+        spravna: "",
+        obrazek: null
+    },
+    // 200.
+    {
+        otazka: "200. Co se musí provést při změně stanoviště řízení HV?",
+        moznosti: ["Zabrzdit průběžnou brzdou", "Zabrzdit přímočinou brzdou", "Zajistit vozidlo klíny"],
+        spravna: "Zabrzdit průběžnou brzdou",
+        obrazek: null
+    },
+    // 201.
+    {
+        otazka: "201. Jaká zkouška brzdy se provádí při rozpojení vlaku na více než dvou místech?",
+        moznosti: ["JZB", "ÚZB", "Zkouška průchodnosti"],
+        spravna: "ÚZB",
+        obrazek: null
+    },
+    // 202.
+    {
+        otazka: "202. Jaká je nová stanovená rychlost vlaku pro vlak Sp 1565 v úseku Rakovník - Lužná u Rakovníka?",
+        moznosti: ["92 km/h", "88 km/h", "100 km/h"],
+        spravna: "88 km/h",
+        obrazek: "obrazky2025/202.jpg"
+    },
+    // 203.
+    {
+        otazka: "203. Jaká je nová stanovená rychlost vlaku pro vlak Os 9710 v úseku Kralupy nad Vltavou - Olovnice?",
+        moznosti: ["63 km/h", "46 km/h", "58 km/h"],
+        spravna: "46 km/h",
+        obrazek: "obrazky2025/203.jpg"
+    },
+    // 204.
+    {
+        otazka: "204. Za ŽST Starý Plzenec dojde k poruše národního vlakového zabezpečovače. Jak bude strojvedoucí pokračovat další v jízdě?",
+        moznosti: ["Dojede do stanice Nezvěstice rychlostí nejvíce 30 km/h", "Dojede do stanice Nezvěstice obvyklou rychlostí zajišťující zachování bezpečnosti železničního provozu", "Nesmí pokračovat v další jízdě a ohlásí neschopné HV"],
+        spravna: "Dojede do stanice Nezvěstice rychlostí nejvíce 30 km/h",
+        obrazek: "obrazky2025/204.jpg"
+    },
+    // 205.
+    {
+        otazka: "205. HV má poruchu národního VZ. Na stanoviště strojvedoucího přichází člen obsluhy vlaku (p. Novák). Jak provede strojvedoucí zápis do Knihy předávky HV?",
+        moznosti: ["„Člen obsluhy vlaku p. Novák poučen o způsobu zastavení vlaku a obsluze vozidlové radiostanice za účelem nouzového volání. Podpis Novák.“", "„Poučen o nouzovém zastavení. Podpis strojvedoucí, podpis Novák.“", "Člen  obsluhy vlaku p. Novák poučen o způsobu zastavení vlaku, zajištění hnacího vozidla proti ujetí, navození bezpečného stavu dle MPBP pro manipulaci s topnými spojkami a obsluze vozidlové radiostanice za účelem nouzového volání. Podpis strojvedoucí, podpis Novák.“"],
+        spravna: "„Poučen o nouzovém zastavení. Podpis strojvedoucí, podpis Novák.“",
+        obrazek: null
+    },
+    // 206.
+    {
+        otazka: "206. Jakým průkazem se musí osoba požadující jízdu na stanovišti strojvedoucího z důvodu poznání traťových poměrů strojvedoucímu prokázat?",
+        moznosti: ["Pouze Pověřením k vykonání poznání tratě vydané dopravcem ČD", "Licencí strojvedoucího a Pověřením k vykonání poznání tratě vydané dopravcem ČD", "Pouze Licencí strojvedoucího"],
+        spravna: "",
+        obrazek: null
+    },
+    // 207.
+    {
+        otazka: "207. Kolik osob smí být přítomno na stanovišti strojvedoucího z něhož je hnací vozidlo řízeno?",
+        moznosti: ["Maximálně tři osoby včetně strojvedoucího", "Maximálně čtyři osoby včetně strojvedoucího", "Maximálně pět osoby včetně strojvedoucího"],
+        spravna: "Maximálně čtyři osoby včetně strojvedoucího",
+        obrazek: null
+    },
+    // 208.
+    {
+        otazka: "Strojvedoucí odstaví lokomotivu vybavenou jednou ruční brzdou ve stanici na manipulační koleji, jejíž spád je 5 ‰. Jak bude vozidlo zajištěno proti ujetí?",
+        moznosti: ["Utažena ruční brzda lokomotivy a podložena dvěma klíny pod dvěma koly na jedné kolejnici na straně spádu", "Utažena ruční brzda lokomotivy a podloženo kolo libovolné nápravy zarážkou na straně spádu", "Pouze utažena ruční brzda lokomotivy"],
+        spravna: "Utažena ruční brzda lokomotivy a podložena dvěma klíny pod dvěma koly na jedné kolejnici na straně spádu",
+        obrazek: null
+    },
+    // 209.
+    {
+        otazka: "209. Strojvedoucí odstaví lokomotivu vybavenou dvěma ručními brzdami ve stanici na manipulační koleji, jejíž spád je 5 ‰. Jak bude vozidlo zajištěno proti ujetí?",
+        moznosti: ["Utažena jedna ruční brzda a podloženo kolo libovolné nápravy zarážkou na straně spádu", "Utaženy obě ruční brzdy a podložena dvěma klíny pod dvěma koly na jedné kolejnici na straně spádu", "Pouze utaženy obě ruční brzdy lokomotivy"],
+        spravna: "Utaženy obě ruční brzdy a podložena dvěma klíny pod dvěma koly na jedné kolejnici na straně spádu",
+        obrazek: null
+    },
+    // 210.
+    {
+        otazka: "210. Strojvedoucí odstaví lokomotivu vybavenou dvěma ručními brzdami v obvodu depa. Jak provede zajištění vozidla proti ujetí?",
+        moznosti: ["Dle Provozního řádu pracoviště ČD", "Pouze podložením zarážkami na straně spádu", "Pouze utažením všech ručních brzd lokomotivy bez ohledu na jejich"],
+        spravna: "Dle Provozního řádu pracoviště ČD",
+        obrazek: null
+    },
+    // 211.
+    {
+        otazka: "211. Dojde-li za jízdy vlaku Os 25906 u HV s mechanickým rychloměrem k poruše rychloměru za zastávkou Praha Jinonice. Kam smí vlak pokračovat v jízdě?",
+        moznosti: ["Do stanice Praha-Stodůlky, sníženou rychlostí", "Do stanice Hostivice, rychlostí nejvíce 30 km/h", "Vlak musí ihned zastavit a v další jízdě nesmí pokračovat. Strojvedoucí si vyžádá pomocné hnací vozidlo"],
+        spravna: "Do stanice Praha-Stodůlky, sníženou rychlostí",
+        obrazek: "obrazky2025/211.jpg"
+    },
+    // 212.
+    {
+        otazka: "212. K soupravě vlaku se připojí postrková lokomotiva. Jaký úkon se musí provést po propojení hlavního potrubí se soupravou vlaku?",
+        moznosti: ["ÚZB", "Po připojení je nutná JZB, při které strojvedoucí postrku kontroluje na manometrech, že došlo k odbrzdění a naplnění potrubí po zásahu strojvedoucího vedoucího vozidla.", "Zkouška těsnosti"],
+        spravna: "Po připojení je nutná JZB, při které strojvedoucí postrku kontroluje na manometrech, že došlo k odbrzdění a naplnění potrubí po zásahu strojvedoucího vedoucího vozidla.",
+        obrazek: null
+    },
+    // 213.
+    {
+        otazka: "213. Sunutý vlak je připraven k odjezdu ze stanice Klatovy. Jaká musí být splněna podmínka, aby mohl strojvedoucí vedoucího vozidla vlaku dát v čase odjezdu návěst „Výzva k pohotovosti“ nebo „Výzva strojvedoucího“?",
+        moznosti: ["Zaměstnanec v čele vlaku sdělí strojvedoucímu informaci: „Pro vlak 1869 ve stanici Klatovy je na odjezdovém návěstidle návěst volno“", "Strojvedoucí musí dostat souhlas k uvedení vlaku do pohybu od výpravčího", "Strojvedoucí musí být vždy vypraven výpravčím jiným způsobem než návěstí hlavního návěstidla"],
+        spravna: "Zaměstnanec v čele vlaku sdělí strojvedoucímu informaci: „Pro vlak 1869 ve stanici Klatovy je na odjezdovém návěstidle návěst volno“",
+        obrazek: "obrazky2025/213.jpg"
+    },
+    // 214.
+    {
+        otazka: "214. Sunutý vlak je připraven k odjezdu ze stanice Klatovy a na odjezdové návěstidlo doprovod vlaku nevidí. Jaká musí být splněna podmínka, aby mohl strojvedoucí vedoucího hnacího vozidla dát v čase odjezdu návěst „Výzva k pohotovosti“ nebo „Výzva strojvedoucího“?",
+        moznosti: ["V čase odjezdu uvede vlak do pohybu dle pokynu zaměstnance v čele vlaku za dodržení jízdy podle rozhledových poměrů", "Strojvedoucí musí dostat souhlas k uvedení vlaku do pohybu od výpravčího", "Strojvedoucí musí být vždy vypraven výpravčím jiným způsobem než návěstí hlavního návěstidla"],
+        spravna: "Strojvedoucí musí být vždy vypraven výpravčím jiným způsobem než návěstí hlavního návěstidla",
+        obrazek: "obrazky2025/214.jpg"
+    },
+    // 215.
+    {
+        otazka: "215. Jaké návěsti pomocí telekomunikačního zařízení předává strojvedoucímu vedoucího hnacího vozidla zaměstnanec v čele sunutého vlaku?",
+        moznosti: ["Pouze návěst odjezdového návěstidla před odjezdem vlaku", "Všechny návěsti a okolnosti, které ovlivňují tuto jízdu, včetně návěstí pro elektrický provoz", "Pouze návěsti hlavních návěstidel a přesnou polohu vzdálenostních"],
+        spravna: "Všechny návěsti a okolnosti, které ovlivňují tuto jízdu, včetně návěstí pro elektrický provoz",
+        obrazek: null
+    },
+    // 216.
+    {
+        otazka: "216. Jak zajistíte soupravu vlaku proti ujetí na širé trati při neschopnosti hnacího vozidla (porucha kompresoru)?",
+        moznosti: ["Zabrzděním ruční brzdy na prvním i posledním voze soupravy vlaku", "Nemusíme použít zajišťovací brzdy, pokud v hl. vzduchojemech máme tlak vzduchu alespoň 5 barů", "Zabrzděním upotřebitelných ručních brzd"],
+        spravna: "Zabrzděním upotřebitelných ručních brzd",
+        obrazek: null
+    },
+    // 217.
+    {
+        otazka: "217. Jaký bude správný postup doprovodu vlaku před odjezdem vlaku ze zastávky v obvodu stanice. HV je řady 810, obsluha vlaku je u dveří vedle strojvedoucího a návěsti si budou uvedení zaměstnanci předávat ústně:",
+        moznosti: ["Strojvedoucí řekne ústně „Výzva k pohotovosti“, obsluha vlaku řekne ústně „Souhlas k odjezdu“", "Strojvedoucí neřekne žádné slovo ani neudělá žádný úkon, obsluha vlaku řekne ústně „Souhlasím s odjezdem“", "Strojvedoucí řekne ústně „Jedeme Maruš“, obsluha vlaku řekne ústně „Můžeš Mildo“"],
+        spravna: "Strojvedoucí řekne ústně „Výzva k pohotovosti“, obsluha vlaku řekne ústně „Souhlas k odjezdu“",
+        obrazek: "obrazky2025/217.jpg"
+    },
+    // 218.
+    {
+        otazka: "218. Jak musí být při vzdálení se ze stanoviště strojvedoucího při střídání na ose zajištěna souprava vlaku proti ujetí?",
+        moznosti: ["Provozním zabrzděním se snížením tlaku o 0,5 nebo 0,8 bar podle typu brzdy (špalíková nebo kotoučová)", "Úplným provozním zabrzděním", "Úplným vyprázdněním průběžného potrubí, rukojeť brzdiče nebo ovladače bude ponechána v poloze „rychločinně“"],
+        spravna: "Úplným provozním zabrzděním",
+        obrazek: null
+    },
+    // 219.
+    {
+        otazka: "219. Vzdálením se ze stanoviště strojvedoucího se rozumí stav, kdy:",
+        moznosti: ["Strojvedoucí odchází od HV do libovolné vzdálenosti, má klíče u sebe a doba vzdálení nepřesáhne 30 min", "Strojvedoucí odchází provádět činnosti uvnitř soupravy tažených vozidel, bez ohledu na vzdálenost a čas", "Strojvedoucí se smí vzdálit ze stanoviště HV do vzdálenosti nejvýše 50 m"],
+        spravna: "Strojvedoucí odchází od HV do libovolné vzdálenosti, má klíče u sebe a doba vzdálení nepřesáhne 30 min",
+        obrazek: null
+    },
+    // 220.
+    {
+        otazka: "220. Jakou rychlostí pojede vlak dle obrázku (max. rychlost ř. 844 je 120 km/h) v úseku A od návěsti „Traťová rychlost“?",
+        moznosti: ["120 km/h", "100 km/h", "115 km/h"],
+        spravna: "",
+        obrazek: "obrazky2025/220.jpg"
+    },
+    // 221.
+    {
+        otazka: "221. Předpis určuje povinnosti pro doprovod vlaku. Kterých zaměstnanců se tyto povinnosti týkají?",
+        moznosti: ["Zaměstnanců obsluhy vlaku a lokomotivní čety", "Palubního personálu", "Posunové čety"],
+        spravna: "Zaměstnanců obsluhy vlaku a lokomotivní čety",
+        obrazek: null
+    },
+    // 222.
+    {
+        otazka: "222. Jak bude postupovat strojvedoucí, dojde-li ve stanici obsazené výpravčím k poruše rychloměru?",
+        moznosti: ["Nesmí s hnacím vozidlem pokračovat v další jízdě", "Smí pokračovat v jízdě sníženou rychlostí do další nebo nejbližší stanice obsazené výpravčím, kde je možné provést výměnu hnacího vozidla", "Smí vlak pokračovat v jízdě sníženou rychlostí do konečné stanice vlaku, kde se lokomotiva odstaví. Je-li však na stanovišti ještě jiný správně fungující ukazatel rychlosti, snížení rychlosti se neuplatňuje"],
+        spravna: "Nesmí s hnacím vozidlem pokračovat v další jízdě",
+        obrazek: null
+    },
+    // 223.
+    {
+        otazka: "223. Na vlakovém vozidle s přípřeží nezapojeném do vícenásobného řízení nastaví strojvedoucí vlaku 2568 do rychloměru číslo vlaku takto:",
+        moznosti: ["502568", "802568", "Číslo vlaku se nezadává, jako číslo se nastaví 000000"],
+        spravna: "502568",
+        obrazek: null
+    },
+    // 224.
+    {
+        otazka: "224. Jako strojvedoucí posunujete na druhé posunové záloze. V rychloměru na pozici číslo vlaku bude zadán údaj v jakém formátu?",
+        moznosti: ["400002", "240000", "4002"],
+        spravna: "",
+        obrazek: null
+    },
+    // 225.
+    {
+        otazka: "225. Je třeba dopravit hnací vozidlo s vadnou mobilní částí VZ z jednoho depa do jiného. Je možné ho vystavit z depa na vlak, pokud bude celou cestu jako řízené v mnohočlenném řízení?",
+        moznosti: ["Ano", "Ne", "Pouze v případě, kdy vlak pojede jako soupravový (Sv)"],
+        spravna: "Ano",
+        obrazek: "obrazky2025/225.jpg"
+    },
+    // 226.
+    {
+        otazka: "226. Soupravový vlak zastavil na širé trati. Jak bude strojvedoucí postupovat v další jízdě v případě, že zjistil poruchu národního VZ?",
+        moznosti: ["Ohlásí závadu a dojede do nejbližší stanice max. rychlostí 30 km/h", "Oznámí závadu a dojede do nejbližší stanice podle rozhledových poměrů a ke všem přejezdům se zvýšenou opatrností", "Ihned ohlásí neschopné HV a vyčká příjezdu pomocné lokomotivy"],
+        spravna: "Ohlásí závadu a dojede do nejbližší stanice max. rychlostí 30 km/h",
+        obrazek: null
+    },
+    // 227.
+    {
+        otazka: "227. Vlak zastavil ve stanici pro poruchu národního VZ. Jak bude strojvedoucí postupovat před další jízdou v případě, že na stanoviště přichází další zaměstnanec?",
+        moznosti: ["Poučí zaměstnance o obsluze radiostanice, zajištění vlaku proti ujetí a zastavení vlaku", "Informuje zaměstnance o poruše VZ a v další jízdě nepokračuje pro poruchu VZ", "Pouze zaměstnance poučí o zastavení vlaku"],
+        spravna: "Poučí zaměstnance o obsluze radiostanice, zajištění vlaku proti ujetí a zastavení vlaku",
+        obrazek: null
+    },
+    // 228.
+    {
+        otazka: "228. Jaká je nová stanovená rychlost vlaku pro vlak Os 5005 v úseku Kolín - Záboří nad Labem?",
+        moznosti: ["115 km/h", "112 km/h", "120 km/h"],
+        spravna: "112 km/h",
+        obrazek: "obrazky2025/228.jpg"
+    },
+    // 229.
+    {
+        otazka: "229. Na jakou dobu se může strojvedoucí vzdálit ze stanoviště strojvedoucího, aniž by musel hnací vozidlo odstavit?",
+        moznosti: ["30 minut", "nesmí se vzdálit", "12 hodin"],
+        spravna: "30 minut",
+        obrazek: null
+    },
+    // 230.
+    {
+        otazka: "230. Při poruše pískovacího zařízení s neúmyslným pískováním strojvedoucí předpokládá ovlivnění činnosti kolejových obvodů. Jaký bude jeho další postup?",
+        moznosti: ["Závadu ohlásí výpravčímu", "Závadu není třeba hlásit", "Závadu ohlásí na konci směny formou Hlášení strojvedoucího"],
+        spravna: "Závadu ohlásí výpravčímu",
+        obrazek: null
+    },
+    // 231.
+    {
+        otazka: "231. Po souhlasu k posunu na točnu nebo přesuvnu se při najíždění nesmí překročit rychlost jízdy:",
+        moznosti: ["3 km/h", "5 km/h", "10 km/h"],
+        spravna: "",
+        obrazek: null
+    },
+    // 232.
+    {
+        otazka: "232. Jaký údaj zapíše strojvedoucí v Knize předávky HV do rubriky 8 „Informace o průběhu směny“ při ukončení směny na HV, v případě, že se na HV nevyskytla žádná závada?",
+        moznosti: ["Žádný zápis neprovádí", "„Schopen“ nebo „SBZ“ (směna bez závad)", "Zápis provede podle vlastního uvážení"],
+        spravna: "Žádný zápis neprovádí",
+        obrazek: null
+    },
+    // 233.
+    {
+        otazka: "233. Kolikrát ve směně provádí strojvedoucí kontrolu pískování?",
+        moznosti: ["Jedenkrát ve směně", "Dvakrát ve směně", "Třikrát ve směně"],
+        spravna: "Jedenkrát ve směně",
+        obrazek: null
+    },
+    // 234.
+    {
+        otazka: "234. Jak bude označeno HV při zavedení aktivního odstavení?",
+        moznosti: ["jedno bílé světlo na každém čele HV", "dvě bílá světla na každém čele HV", "jedno bílé a jedno červené světlo na každém čele HV"],
+        spravna: "jedno bílé světlo na každém čele HV",
+        obrazek: null
+    },
+    // 235.
+    {
+        otazka: "235. Vlak Lv je veden samostatným HV řady 754. Smí strojvedoucí pro brzdění za běžných provozních podmínek použít přímočinnou brzdu?",
+        moznosti: ["Ano", "Ne, přímočinná brzda slouží jen jako záložní v případě poruchy", "Ne, smí použít výhradně samočinnou brzdu"],
+        spravna: "Ano",
+        obrazek: null
+    },
+    // 236.
+    {
+        otazka: "236. Je použití vysokotlakého plnicího švihu při zkoušce brzdy dovoleno?",
+        moznosti: ["Ne, je zakázáno s ohledem na možnost přebití brzdy vlaku", "Ano, je dovoleno bez omezení", "Ano, ale jen do hodnoty provozního tlaku maximálně 5,4 bar"],
+        spravna: "Ne, je zakázáno s ohledem na možnost přebití brzdy vlaku",
+        obrazek: null
+    },
+    // 237.
+    {
+        otazka: "237. Strojvedoucí přivěšuje lokomotivu k soupravě vlaku, jejíž první vůz je vybaven napájecím potrubím. Spojí spolu s ostatními předepsanými vedeními také napájecí potrubí?",
+        moznosti: ["Ano, vždy", "Nemusí, pokud toto není v TJŘ požadováno", "Ano, ale jen, pokud je předepsáno Plánem řazení A"],
+        spravna: "Ano, vždy",
+        obrazek: null
+    },
+    // 238.
+    {
+        otazka: "238. Jaký úkon provede strojvedoucí vlaku sestaveného z osobních vozů klasické stavby (např. řady A, B apod.) na pokyn „Zabrzděte“ daný od vozmistra kontrolujícího účinek brzdy vozidel:",
+        moznosti: ["Sníží tlak vzduchu v hlavním potrubí o cca 0,5 bar", "Přestaví brzdič (ovladač brzdiče) do polohy „Závěr“", "Sníží tlak vzduchu v hlavním potrubí o minimálně 0,8 bar"],
+        spravna: "Sníží tlak vzduchu v hlavním potrubí o cca 0,5 bar",
+        obrazek: null
+    },
+    // 239.
+    {
+        otazka: "239. Započítává se elektrodynamická brzda u lokomotiv?",
+        moznosti: ["Ano", "Ne", "Jen pokud je to uvedeno v TTP"],
+        spravna: "Ano",
+        obrazek: null
+    },
+    // 240.
+    {
+        otazka: "240. Započítává se elektrodynamická brzda u elektrických jednotek?",
+        moznosti: ["Ano", "Ne", "Jen pokud je to uvedeno v TTP"],
+        spravna: "Ano",
+        obrazek: null
+    },
+    // 241.
+    {
+        otazka: "241. Vlak R 299 stojící v ŽST Kolejov má ve Zprávě o brzdění a TJŘ uvedeny hodnoty dle obrázku. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Uvede vlak do pohybu bez omezení rychlosti", "Před odjezdem vlaku stanoví novou nejvyšší rychlost vlaku pro uvedený úsek na 95 km/h", "Vyžádá si přepočítanou Zprávu o brzdění"],
+        spravna: "Uvede vlak do pohybu bez omezení rychlosti",
+        obrazek: "obrazky2025/241.jpg"
+    },
+    // 242.
+    {
+        otazka: "242. Vlak R 299 stojící v ŽST Kolejov má ve Zprávě o brzdění a TJŘ uvedeny hodnoty dle obrázku. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Před odjezdem vlaku stanoví novou nejvyšší rychlost vlaku pro uvedený úsek na 85 km/h", "Uvede vlak do pohybu bez omezení rychlosti v daném úseku", "Vyžádá si opravu ZOB"],
+        spravna: "Před odjezdem vlaku stanoví novou nejvyšší rychlost vlaku pro uvedený úsek na 85 km/h",
+        obrazek: "obrazky2025/242.jpg"
+    },
+    // 243.
+    {
+        otazka: "243. Jak se strojvedoucí na elektrické jednotce seznámí se zprávou o brzdění:",
+        moznosti: ["z tabletu", "od strojmistra", "V TTP"],
+        spravna: "z tabletu",
+        obrazek: null
+    },
+    // 244.
+    {
+        otazka: "244. Vlak sestavený z lokomotivy a soupravy 5 vozů vjíždí do ŽST Kolejov s pobytem pro nástup a výstup cestujících. Jakým způsobem zastaví strojvedoucí vlak?",
+        moznosti: ["Ovládáním průběžné brzdy (příp. v kombinaci s dynamickou brzdou)", "Použitím přímočinné (přídavné) brzdy HV", "Použitím dynamické brzdy HV, v případě potřeby zavede rychločinné brzdění"],
+        spravna: "Ovládáním průběžné brzdy (příp. v kombinaci s dynamickou brzdou)",
+        obrazek: null
+    },
+    // 245.
+    {
+        otazka: "245. Při jízdě vlaku nastanou zhoršené adhezní podmínky a vlak má zastavit na zastávce. Jak bude postupovat strojvedoucí, aby toto zastavení zajistil?",
+        moznosti: ["Zavede včasné brzdění za použití nižšího stupně zabrzdění", "Ihned zavede úplné provozní zabrzdění průběžné brzdy vlaku", "Pro brzdění použije dynamickou brzdu a vlak následně dobrzdí přímočinnou (přídavnou) brzdou HV"],
+        spravna: "Zavede včasné brzdění za použití nižšího stupně zabrzdění",
+        obrazek: null
+    },
+    // 246.
+    {
+        otazka: "246. Za jízdy vlaku Os 8189 se stanovenou rychlostí 100 km/h v úseku Kolejov – Zarážedlice hustě sněží a dochází k víření sněhu. Vlak má ve Zprávě o brzdění a TJŘ uvedeny hodnoty dle obrázku. Jaký bude postup strojvedoucího za uvedených podmínek?",
+        moznosti: ["Upraví rychlost vlaku tak, aby na požadovaném místě dosáhl očekávaného snížení rychlosti, resp. zastavení vlaku", "Upraví rychlost vlaku nejvýše na hodnotu 80 km/h", "Omezení rychlosti se ho netýká"],
+        spravna: "Upraví rychlost vlaku tak, aby na požadovaném místě dosáhl očekávaného snížení rychlosti, resp. zastavení vlaku",
+        obrazek: null
+    },
+    // 247.
+    {
+        otazka: "247. Jaký je tlak v hlavní potrubí při úplném provozním zabrzdění:",
+        moznosti: ["3,5 bar", "3 bar", "5 bar"],
+        spravna: "",
+        obrazek: null
+    },
+    // 248.
+    {
+        otazka: "248. Je možné provést zkoušku brzdy jen pomocí diagnostického displeje vozidla:",
+        moznosti: ["Ano, pokud je jím lokomotiva vybavena", "Pouze u posunu"],
+        spravna: "",
+        obrazek: null
+    },
+    // 249.
+    {
+        otazka: "249. Jak se strojvedoucí vedoucího vozidla vlaku dorozumí s vedoucím obsluhy vlaku?",
+        moznosti: ["Pomocí aplikace ČD Kontakty", "Vedoucí obsluhy vlaku musí strojvedoucímu ve výchozí stanici vlaku předat kontakt na mobilní telefon", "Strojvedoucí zavolá dispečerovi osobní dopravy ČD a požádá ho o kontakt na vedoucího obsluhy vlaku"],
+        spravna: "Pomocí aplikace ČD Kontakty",
+        obrazek: "obrazky2025/249.jpg"
+    },
+    // 250.
+    {
+        otazka: "250. Z důvodu mimořádnosti rozhodne dispečer osobní dopravy o jízdě vlaku R 1499 v úseku Zálezlice - Bítov bez obsluhy vlaku. Dá strojvedoucí souhlas s takovou jízdou, pokud níže uvedená souprava je vybavena systémem CODS?",
+        moznosti: ["Ano, pokud se strojvedoucí může v úseku Zálezlice – Bítov sám bezpečně přesvědčit o ukončení výstupu a nástupu cestujících", "Ne, tuto soupravu není možno takto provozovat", "Ano, pokud se určený zaměstnanec přesvědčí o ukončení výstupu a nástupu cestujících a oznámí strojvedoucímu: „Dveře všech vozidel vlaju 1499 jsou uzavřeny. Drobek“"],
+        spravna: "Ano, pokud se strojvedoucí může v úseku Zálezlice – Bítov sám bezpečně přesvědčit o ukončení výstupu a nástupu cestujících",
+        obrazek: "obrazky2025/250.jpg"
+    },
+    // 251.
+    {
+        otazka: "251. Z důvodu mimořádnosti rozhodne dispečer osobní dopravy o jízdě vlaku R 1599 v úseku Vranov - Bítov bez obsluhy vlaku. Může být vlak takto provozován, pokud níže uvedená souprava je provozována v systému TB 5?",
+        moznosti: ["Ano, pokud se určený zaměstnanec přesvědčí o ukončení výstupu a nástupu cestujících a oznámí strojvedoucímu: „Dveře všech vozidel vlaku 1599 jsou uzavřeny. Drobek“", "Ano, pokud se strojvedoucí může v úseku Vranov – Bítov sám bezpečně přesvědčit o ukončení výstupu a nástupu cestujících", "Ne, tuto soupravu není možné takto provozovat"],
+        spravna: "Ano, pokud se určený zaměstnanec přesvědčí o ukončení výstupu a nástupu cestujících a oznámí strojvedoucímu: „Dveře všech vozidel vlaku 1599 jsou uzavřeny. Drobek“",
+        obrazek: "obrazky2025/251.jpg"
+    },
+    // 252.
+    {
+        otazka: "252. Jak se strojvedoucí dozví o připravenosti k odjezdu soupravového vlaku s obsluhou vlaku?",
+        moznosti: ["Návěstí „Souhlas k odjezdu“ danou obsluhou vlaku", "Od zaměstnance určeného technologickými postupy", "Od výpravčího, který staví požadovanou vlakovou cestu"],
+        spravna: "Návěstí „Souhlas k odjezdu“ danou obsluhou vlaku",
+        obrazek: null
+    },
+    // 253.
+    {
+        otazka: "253. Strojvedoucí obdrží v čase 17:20 hod od obsluhy vlaku návěst „Souhlas k odjezdu“. Jaký bude další postup strojvedoucího?",
+        moznosti: ["Návěst nepřevezme", "Dá návěst „Převzetí pokynu“, uzavře centrálně ovládané dveře, vyčká na čas odjezdu a poté uvede vlak do pohybu", "Dá návěst „Převzetí pokynu“, vyčká na čas odjezdu, poté uzavře centrálně ovládané dveře a uvede vlak do pohybu"],
+        spravna: "Návěst nepřevezme",
+        obrazek: "obrazky2025/253.jpg"
+    },
+    // 254.
+    {
+        otazka: "254. Vlak odjížděl od nástupiště ŽST Krašov, po rozjezdu mimořádně zastavil z důvodu odpadnutí ventilu VZ a část soupravy zůstala u nástupiště. V TJŘ ŽST Krašov není ve sloupci 2 symbol „Výpravky“. Jak bude strojvedoucí postupovat po odstranění závady VZ?",
+        moznosti: ["Dá návěst „Výzva k pohotovosti“ („Výzva strojvedoucího“), vyčká na obdržení návěsti „Souhlas k odjezdu“ od obsluhy vlaku a uvede vlak do pohybu", "Vyčká na obdržení návěsti „Souhlas k odjezdu“ od obsluhy vlaku uvede vlak do pohybu", "Dá návěst „Pozor“, zkontroluje pohledem situaci na nástupišti, zda nedochází k ohrožení bezpečnosti cestujících a uvede vlak do pohybu"],
+        spravna: "Dá návěst „Výzva k pohotovosti“ („Výzva strojvedoucího“), vyčká na obdržení návěsti „Souhlas k odjezdu“ od obsluhy vlaku a uvede vlak do pohybu",
+        obrazek: "obrazky2025/254.jpg"
+    },
+    // 255.
+    {
+        otazka: "255. Vlak s přepravou cestujících bez obsluhy vlaku Os 19998 zastavil na zastávce Unětice. Jak bude strojvedoucí postupovat v čase odjezdu vlaku, je-li hnací vozidlo vybaveno akustickou signalizací uzavření dveří?",
+        moznosti: ["Uzavře centrálně ovládané dveře a uvede vlak do pohybu", "Dá návěst „Pozor“, uzavře centrálně ovládané dveře a uvede vlak do pohybu", "Dá návěst „Výzva k pohotovosti“, uzavře centrálně ovládané dveře a uvede vlak do pohybu"],
+        spravna: "Uzavře centrálně ovládané dveře a uvede vlak do pohybu",
+        obrazek: "obrazky2025/255.jpg"
+    },
+    // 256.
+    {
+        otazka: "256. Vlak s přepravou cestujících bez obsluhy vlaku Os 19996 zastavil na zastávce Běloky. Jak bude strojvedoucí postupovat v čase odjezdu vlaku, není-li hnací vozidlo vybaveno akustickou signalizací uzavření dveří?",
+        moznosti: ["Dá návěst „Výzva k pohotovosti“, uzavře centrálně ovládané dveře a uvede vlak do pohybu", "Dá návěst „Pozor“, uzavře centrálně ovládané dveře a uvede vlak do pohybu", "Uzavře centrálně ovládané dveře a uvede vlak do pohybu"],
+        spravna: "Dá návěst „Výzva k pohotovosti“, uzavře centrálně ovládané dveře a uvede vlak do pohybu",
+        obrazek: "obrazky2025/256.jpg"
+    },
+    // 257.
+    {
+        otazka: "257. Vlak zastavil na zastávce v obvodu stanice pro nástup a výstup cestujících a pokračuje v jízdě stejným směrem. Jaký bude postup strojvedoucího před rozjezdem vlaku?",
+        moznosti: ["Dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na výpravu vlaku jiným způsobem než návěstí hl. návěstidla, dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na obdržení návěsti „Souhlas k odjezdu“ a uvede vlak do pohybu"],
+        spravna: "Dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu",
+        obrazek: "obrazky2025/257.jpg"
+    },
+    // 258.
+    {
+        otazka: "258. Vlak zastavil na zastávce v obvodu stanice pro nástup a výstup cestujících a pokračuje v jízdě stejným směrem. Jaký bude postup strojvedoucího před rozjezdem vlaku?",
+        moznosti: ["Dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na výpravu vlaku jiným způsobem než návěstí hl. návěstidla, dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na souhlas k jízdě od výpravčího a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu"],
+        spravna: "Dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu",
+        obrazek: "obrazky2025/258.jpg"
+    },
+    // 259.
+    {
+        otazka: "259. Vlak zastavil na zastávce v obvodu stanice pro nástup a výstup cestujících a pokračuje v jízdě stejným směrem. Jaký bude postup strojvedoucího před rozjezdem vlaku?",
+        moznosti: ["Dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na souhlas k jízdě od výpravčího a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na výpravu vlaku jiným způsobem než návěstí hl. návěstidla, dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu"],
+        spravna: "",
+        obrazek: "obrazky2025/259.jpg"
+    },
+    // 260.
+    {
+        otazka: "260. Vlak zastavil na zastávce v obvodu stanice pro výstup a nástup cestujících a poté pokračuje v jízdě opačným směrem. Jaký bude postup strojvedoucího před rozjezdem vlaku?",
+        moznosti: ["Dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na výpravu vlaku jiným způsobem než návěstí hl. návěstidla, dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu", "Vyčká na souhlas k jízdě od výpravčího a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu"],
+        spravna: "Dá návěst „Výzva k pohotovosti“ („Výzvu strojvedoucího“) a po obdržení návěsti „Souhlas k odjezdu“ uvede vlak do pohybu",
+        obrazek: "obrazky2025/260.jpg"
+    },
+    // 261.
+    {
+        otazka: "261. Jakou návěst a komu dá strojvedoucí postrkové jednotky po obdržení návěsti „Pohotovi k odjezdu“ od člena obsluhy vlaku 2 a uzavření dveří?",
+        moznosti: ["Návěst „Pohotovi k odjezdu“ členu obsluhy vlaku 1", "Návěst „Souhlas k odjezdu“ strojvedoucímu vedoucího hnacího vozidla", "Pomocí vozidlové radiostanice strojvedoucímu vedoucího hnacího vozidla: „Dveře mám zavřené“"],
+        spravna: "Návěst „Pohotovi k odjezdu“ členu obsluhy vlaku 1",
+        obrazek: "obrazky2025/261.jpg"
+    },
+    // 262.
+    {
+        otazka: "262. Hlásí zaměstnanec v čele sunutého vlaku tuto návěst?",
+        moznosti: ["Ano, je povinen hlásit všechny návěsti", "Ano, avšak návěsti vztažné k rychlosti nad 30 km/h nehlásí", "Ne, hlásí jen návěsti hlavních návěstidel"],
+        spravna: "Ano, avšak návěsti vztažné k rychlosti nad 30 km/h nehlásí",
+        obrazek: "obrazky2025/262.jpg"
+    },
+    // 263.
+    {
+        otazka: "263. Jak často opakuje u sunutého vlaku zaměstnanec v čele sunutého vlaku závazné slovní pokyny k sunutí?",
+        moznosti: ["Vždy po ujetí nejvíce 200 m", "Nejdéle každých 5 vteřin", "Podle dohody se strojvedoucím"],
+        spravna: "Vždy po ujetí nejvíce 200 m",
+        obrazek: null
+    },
+    // 264.
+    {
+        otazka: "264. Od jaké vzdálenosti musí být u sunutého vlaku doplněn slovní pokyn k sunutí o informací o zbývajících metrech k místu zastavení?",
+        moznosti: ["100 m", "Podle potřeby", "200 m"],
+        spravna: "200 m",
+        obrazek: null
+    },
+    // 265.
+    {
+        otazka: "265. Musí strojvedoucí informaci o návěsti nepřenosného návěstidla prostřednictvím radiové stanice u sunutého vlaku potvrdit?",
+        moznosti: ["Ano, musí zopakovat a převzetí návěsti potvrdit („Rozumím, na oddílovém návěstidle návěst volno“)", "Ne", "Ano, pomocí návěsti „Převzetí pokynu“"],
+        spravna: "Ano, musí zopakovat a převzetí návěsti potvrdit („Rozumím, na oddílovém návěstidle návěst volno“)",
+        obrazek: null
+    },
+    // 266.
+    {
+        otazka: "266. Jaké poznání tratí lze realizovat pomocí videopoznání?",
+        moznosti: ["Jen opakované poznání", "Opakované a první poznání, pokud se jedná o jednoduché místní poměry", "Poznání kolejiště ČD"],
+        spravna: "",
+        obrazek: null
+    },
+    // 267.
+    {
+        otazka: "267. Jaké poznání tratí lze realizovat pomocí fotopoznání?",
+        moznosti: ["Doplňkové poznání v případech rekonstrukce staničních nebo traťových úseků", "Nelze považovat za formu poznání, je jen informativní", "Je formou poznání pro staniční posun nebo kolejiště ČD"],
+        spravna: "Doplňkové poznání v případech rekonstrukce staničních nebo traťových úseků",
+        obrazek: null
+    },
+    // 268.
+    {
+        otazka: "268. Kdy musí provést strojvedoucí synchronizaci dat ve služebním přiděleném tabletu?",
+        moznosti: ["Každý den ve 12:00 hod", "V případě potřeby, pokud zjistí, že došlo k aktualizaci jemu přidělených dokumentů", "Na začátku směny"],
+        spravna: "Na začátku směny",
+        obrazek: null
+    },
+    // 269.
+    {
+        otazka: "269. Jak se provádí ověření činnosti brzdy posunového dílu?",
+        moznosti: ["Na posledním průběžně brzděném vozidle", "Kdekoliv na soupravě", "Na prvním vozidle soupravy"],
+        spravna: "Na posledním průběžně brzděném vozidle",
+        obrazek: null
+    },
+    // 270.
+    {
+        otazka: "270. Jakým způsobem je strojvedoucí informován o změnách TTP nebo ZDD, dojde-li ke změně traťových nebo místních poměrů?",
+        moznosti: ["Prostřednictvím služebního tabletu v aplikaci MAPSIS", "Vydaným dokumentem v aplikaci Dokumenty k seznámení", "Zprávou do služební e-mailové schránky"],
+        spravna: "Prostřednictvím služebního tabletu v aplikaci MAPSIS",
+        obrazek: null
+    },
+    // 271.
+    {
+        otazka: "271. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Zabrzděte“ – přikazuje strojvedoucímu zabrzdit soupravu průběžnou brzdou", "„Výhybka je uvolněna“ – dává na žádost výhybkáře strojvedoucí a upozorňuje na to, že všechna vozidla uvolnila příslušnou výhybku", "„Brzda v pořádku“ – informuje o ukončení a výsledku zkoušky brzdy"],
+        spravna: "„Zabrzděte“ – přikazuje strojvedoucímu zabrzdit soupravu průběžnou brzdou",
+        obrazek: "obrazky2025/271.jpg"
+    },
+    // 272.
+    {
+        otazka: "272. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Odbrzděte“ – přikazuje strojvedoucímu odbrzdit soupravu průběžnou brzdou", "„Zabrzděte“ – přikazuje strojvedoucímu zabrzdit soupravu průběžnou brzdou", "„Výhybka je uvolněna“ – dává na žádost výhybkáře strojvedoucí a upozorňuje na to, že všechna vozidla uvolnila příslušnou výhybku"],
+        spravna: "„Odbrzděte“ – přikazuje strojvedoucímu odbrzdit soupravu průběžnou brzdou",
+        obrazek: "obrazky2025/272.jpg"
+    },
+    // 273.
+    {
+        otazka: "273. Jaký je název této návěsti a jaký pokyn dává?",
+        moznosti: ["„Brzda v pořádku“ – informuje o ukončení a výsledku zkoušky brzdy", "„Odbrzděte“ – prokazuje strojvedoucímu odbrzdit soupravu průběžnou brzdou", "„Zabrzděte“ – přikazuje strojvedoucímu zabrzdit soupravu průběžnou brzdou"],
+        spravna: "„Brzda v pořádku“ – informuje o ukončení a výsledku zkoušky brzdy",
+        obrazek: "obrazky2025/273.jpg"
+    },
+    // 274.
+    {
+        otazka: "274. Na trati jsou umístěny horní a dolní rychlostníky N. Který rychlostník platí pro vlak dle obrázku, pokud je v ZOB uvedeno „PASS 2“?",
+        moznosti: ["Dolní", "Horní", "podle počasí"],
+        spravna: "Horní",
+        obrazek: "obrazky2025/274.jpg"
+    },
+    // 275.
+    {
+        otazka: "275. Na vlaku Ex je vykonávána ÚZB v režimu R+Mg. Po zabrzdění na zkoušku brzdy a provedené kontrole stavu zabrzděno obdrží strojvedoucí od vozmistra kontrolujícího účinek brzdy vozidel opětovně pokyn „Zabrzděte“ pro vykonání kontroly správné funkce Mg-brzdy. Jaký úkon na základě tohoto pokynu strojvedoucí provede?",
+        moznosti: ["Vypustí vzduch z hlavního potrubí zavedením rychločinného brzdění", "Sníží tlak v potrubí o hodnotu 3,5 bar oproti provoznímu tlaku", "Přestaví brzdič (ovladač brzdiče) do polohy „Závěr“"],
+        spravna: "Vypustí vzduch z hlavního potrubí zavedením rychločinného brzdění",
+        obrazek: null
+    },
     ];
 
 
@@ -1797,7 +2385,7 @@ const originalniOtazky = [
     // --- PERZISTENTNÍ PROMĚNNÉ ---
     let celyBalicekOtazekID = []; // ID (Indexy 0-354) otázek v náhodném pořadí
     let indexDalsiOtazky = 0;    // Pozice, odkud se má brát v celyBalicekOtazekID
-    const MAX_POCET_OTAZEK = originalniOtazky.length; // 191
+    const MAX_POCET_OTAZEK = originalniOtazky.length; // 275
 
     // --- NOVÁ PROMĚNNÁ PRO RECYKLACI OTÁZEK ---
     // Skladuje indexy (0-354) otázek, které v rámci aktuálního kvízu nebyly zodpovězeny správně.
@@ -2228,6 +2816,3 @@ function resetStatistiky() {
 
 </body>
 </html>
-
-
-
